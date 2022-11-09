@@ -1,0 +1,8 @@
+maker2zff from maker
+
+catchr.pl from spaln
+homology/catchr.pl:#!/usr/bin/perl
+homology/makblk.pl:#!/usr/bin/perl
+homology/makeidx.pl:#!/usr/bin/perl
+
+seqkit from seqkit
