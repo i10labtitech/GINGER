@@ -5,7 +5,8 @@ use warnings;
 use Carp;
 
 use FindBin;
-use lib ("$FindBin::Bin/../../lib/perl5/denovo/");
+#use lib ("$FindBin::Bin/../../lib/perl5/denovo/");
+use lib "$ENV{CONDA_PREFIX}/opt/pasa-2.5.2/PerlLib";
 use Gene_obj;
 use GFF3_utils;
 use Data::Dumper;
