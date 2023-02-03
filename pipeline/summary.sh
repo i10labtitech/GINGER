@@ -30,7 +30,7 @@ SCRIPT=`dirname $LEMON_PATH`/../util/summary
 
 GenomePre=`perl -ne 'if (/INPUT_GENOME\s*\=\s*\"(\S+)\"/) {print "$1\n";}' nextflow.config`
 Genome=`readlink -f ${GenomePre}`
-prefix="gingerlime"
+prefix="ginger"
 phase2output="${prefix}_phase2.gff" 
 
 ${SCRIPT}/final_reform ${phase2output} ${TMPFILE}.gff
