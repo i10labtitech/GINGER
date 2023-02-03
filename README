@@ -54,6 +54,8 @@ nextflow -C nextflow.config run /path/to/pipeline/ginger.nf
 /path/to/pipeline/summary.sh
 '''
 [Note] "/path/to/pipeline/" a path to a directory <"pipeline/" in GINGER's source tree>
+[Note] An automatically calculated threshold for the score is written 
+       like "score threshold = 1.25" in phase1.log.
 
 If you want to run each methods separetely in the preparation phase, type like
 following. abinitio.nf must be executed after mapping.nf. The order in which
