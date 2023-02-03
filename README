@@ -53,8 +53,7 @@ nextflow -C nextflow.config run /path/to/pipeline/ginger.nf
 /path/to/pipeline/phase2.sh 50
 /path/to/pipeline/summary.sh
 '''
-
-* "/path/to/pipeline/" a path to a directory <"pipeline/" in GINGER's source tree>
+[Note] "/path/to/pipeline/" a path to a directory <"pipeline/" in GINGER's source tree>
 
 If you want to run each methods separetely in the preparation phase, type like
 following. abinitio.nf must be executed after mapping.nf. The order in which
@@ -81,6 +80,9 @@ argument is the threshold. 1.0 is an example.
 
 ### Final output ###############################################################
 
-The final output is stored in ginger_phase2.gff. Its file format is GFF3.
-See http://gmod.org/wiki/GFF3 for details.
-Statistical information about the output is stored in ginger_stats.tsv.
+The final outputs:
+* ginger_phase2.gff : gene structures by GINGER (GFF3) 
+  [Note] See http://gmod.org/wiki/GFF3 for details.
+* ginger.pep        : protein sequences of the gene structurs (FASTA)
+* ginger.cds        : CDS of the gene structures (FASTA)
+* ginger_stats.tsv  : statistical information of gene structures
