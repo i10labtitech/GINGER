@@ -28,17 +28,16 @@ function rm_tmpfile {
 LEMON_PATH=`realpath "$0"`
 SCRIPT=`dirname $LEMON_PATH`/../util/summary
 
-if test $# -ne 3 ; then
-    echo "1. phase2.gff"
-    echo "2. genome.fa"
-    echo "3. output prefix"
-else
-    ${SCRIPT}/final_reform $1 ${TMPFILE}.gff
-    #calcurate stats
-    ${SCRIPT}/gff3_reformat.pl ${TMPFILE}.gff $2 tmp LEMON > ${TMPFILE}.reformat.gff
-    ${SCRIPT}/gff3_stats.pl ${TMPFILE}.gff $2 > ${3}_stats.tsv
-    #make CDS seq. and protein seq.
-    python ${SCRIPT}/make_cds_from_gff.py $1 $2 $3
-fi
+GenomePre=`perl -ne 'if (/INPUT_GENOME\s*\=\s*\"(\S+)\"/) {print "$1\n";}' nextflow.config`
+Genome=`readlink -f ${GenomePre}`
+prefix="ginger"
+phase2output="${prefix}_phase2.gff" 
+
+${SCRIPT}/final_reform ${phase2output} ${TMPFILE}.gff
+#calcurate stats
+${SCRIPT}/gff3_reformat.pl ${TMPFILE}.gff ${Genome} tmp LEMON > ${TMPFILE}.reformat.gff
+${SCRIPT}/gff3_stats.pl ${TMPFILE}.gff ${Genome} > ${prefix}_stats.tsv
+#make CDS seq. and protein seq.
+python ${SCRIPT}/make_cds_from_gff.py ${phase2output} ${Genome} ${prefix}
 
 trap "rm_tmpfile" EXIT INT PIPE TERM

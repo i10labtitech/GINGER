@@ -68,16 +68,14 @@ for f in gff:
 		elif kata not in type_list:
 			if kata not in ebox: 
 				e += 1
-				err.write("["+str(e)+"]注意："+kata+"を検出しました。このプログラムではmRNA,CDS,exon以外扱うことができません。\n")
+				err.write("["+str(e)+"]warning!："+kata+" is detected\n")
 				ebox.append(kata)
 			elif kata in ebox:
 				e +=1
 res.close()
 
 if e == 0:
-	err.write("エラーはありませんでした\n")
+	err.write("No error\n")
 elif e > 0:
-	err.write("\nエラーは合計"+num+"ありました\n")
+	err.write("\n"+num+" errors\n")
 err.close()
-
-#注意：GFFの9カラム目がID、Parentの順に並んでいる必要あり。

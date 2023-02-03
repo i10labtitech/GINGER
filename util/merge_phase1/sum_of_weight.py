@@ -25,7 +25,7 @@ methods = {
     "DENOVO_WEIGHT":0,
     "HOMOLOGY_WEIGHT":0,
     "AUGUSTUS_WEIGHT":0,
-    "SNAP_WEIGHT":0,
+    "SNAP_WEIGHT":0
 }
 
 max_weight = 0

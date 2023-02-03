@@ -45,4 +45,4 @@ while (<>) {
 print "$score\t$size\t$ne\n";
 
 __END__
-NC_000001.11    candidate       mRNA    11774   13467   268     +       .       ID=group_num_1_1.mrna1;Parent=group_num_1_1;normalized_score=0.16;sup
+

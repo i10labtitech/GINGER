@@ -23,7 +23,6 @@ import sys
 
 Num=int(sys.argv[2])
 
-#ファイル生成
 rang=range(Num)
 for i in rang:
 	nUm=i+1
@@ -33,7 +32,6 @@ for i in rang:
 
 del i
 
-#出力ファイルに分配
 m=1
 x=Num
 lIst=open(sys.argv[1],"r")
@@ -65,11 +63,3 @@ for i in lIst:
 	del TF
 lIst.close()
 
-##fasta生成
-#NUM=range(Num)
-
-#for i in NUM:
-#	ii=str(i+1)
-#	os.system("python /data/yuasa/script/augustus_crafty/tab_separate.py sPlit"+str(ii)+".tMp > sPlit"+str(ii)+".fasta")
-#
-#os.system("rm *.tMp")

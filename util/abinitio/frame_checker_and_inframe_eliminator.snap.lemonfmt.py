@@ -212,8 +212,6 @@ for l in box:
 		dict_tran[l]= 2
 	else:
 		dict_tran[l]= 3
-		print("#ERRORの遺伝子の最初のCDSの読み枠を3にしています。")
-		print("#ERROR:マッチする読み枠がない遺伝子を見つけました！["+l+"]")
 		print("#>"+l+"_snap\n#"+dict_gene[l])
 		print("#>"+l+"_trans_frame_1\n#"+p1)
 		print("#>"+l+"_trans_frame_2\n#"+p2)

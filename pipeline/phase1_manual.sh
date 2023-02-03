@@ -30,33 +30,31 @@ Polish=${SCRIPT}/initial_exon_polish
 filter=${SCRIPT}/score_filtering.py
 info=${SCRIPT}/info_annotate.py
 ext_score=${SCRIPT}/extract_score.py
-cutoff=${SCRIPT}/cutoff.py
+cutoff=${SCRIPT}/cutoff.pl
 sum=${SCRIPT}/sum_of_weight.pl
 intronLen=${SCRIPT}/intron_length.py
 intronDist=${SCRIPT}/intron_distribution.py
 refine=${SCRIPT}/refine_mrna_pos.py
 
-if test $# -ne 5 ; then
+if test $# -ne 1 ; then
     echo "---GINGER pipeline; phase1 (manual filtering mode) ---"
-    echo "1: all.gff"
-    echo "2: genome.fa"
-    echo "3: config.ini"
-    echo "4: output prefix"
-    echo "5: score threshold"
+    echo "1: score threshold"
 else
     
-    all=`readlink -f $1`
-    Genome=`readlink -f $2`
+    all=`readlink -f ginger_all.gff`
+    GenomePre=`perl -ne 'if (/INPUT_GENOME\s*\=\s*\"(\S+)\"/) {print "$1\n";}' nextflow.config`
+    Genome=`readlink -f ${GenomePre}`
     w=`perl ${sum} nextflow.config`
-    prefix=$4
-    n=$5
+    prefix="ginger"
+    n=$1
     
     mkdir ${prefix}_phase1_result
     cd ${prefix}_phase1_result
     
     #------------Grouping
     echo "[1/3] Grouping"
-    $Gtool -f $all
+    echo "$Gtool -f $all"
+    $Gtool -f $all > /dev/null
     python ${intronLen} $all mRNA CDS > ${prefix}_intron.txt
     intron_limit=`python ${intronDist} ${prefix}_intron.txt | grep "predicted" | awk '{printf "%d\n", $3}'`
     echo "intron_limit"
@@ -64,7 +62,6 @@ else
     $GSub Group.gff 0.25 $w > Group_sub_pre.gff
     python ${refine} Group_sub_pre.gff > Group_sub_pre_refine.gff
     $NSub Group_sub_pre_refine.gff $intron_limit > Group_sub.gff
-
     
     #------------Searching
     echo "[2/3] DP search"
@@ -88,8 +85,6 @@ else
     
     #------------Combining
     
-    sh test.sh
-
     cd ../
     ln -s `pwd`/${prefix}_phase1_result/${prefix}_filter_nosig_polish.gff ./${prefix}_phase1.gff
     

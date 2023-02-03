@@ -1,28 +1,83 @@
-## Description
-GINGER: Gradual INtegrated GEne Reconstruction
+# GINGER: Gradual INtegrated GEne Reconstruction
 
-GINGER is a tool that is implemented an integrated method for gene gene
+## Description #################################################################
+
+GINGER is a tool that is implemented an integrated method for gene
 structure prediction in higher eukaryotes. RNA-Seq-based methods,
 ab initio-based methods, homology-based methods are performed, and then 
 gene structures are reconstructed via dynamic programming with appropriately
 weighted and scored exon/intron/intergenic regions. Different prediction
 processes and filtering criteria are applied to multi-exon and single-exon
-genes. This pipeline is implemented using Nextflow, which allows for the
-efficient and effective use of computing resources.
+genes. This pipeline is implemented using Nextflow.
 
-## Web site
+## Web site ####################################################################
 
-## Requirements
+<https://github.com/i10labtitech/GINGER>
 
-See INSTALL.
+## Requirements ################################################################
 
-## Installation
+See "Requirements" section in INSTALL.
 
-See INSTALL.
+## Installation ################################################################
 
-## Synopsis
-### Inputs
+See "Installation" section in INSTALL.
 
-### Commands
+## Synopsis ####################################################################
+### Settings ###################################################################
 
-### Final output
+Set nextflow.config properly.
+See "Settings" section in INSTALL
+
+### Inputs #####################################################################
+
+* A file containing genome sequences (multi FASTA format)
+* A file containing masked genome sequences by RpeatMasker (multi FASTA format)
+* A file containing repeat information by RpeatMasker (***.out)
+* A file containing RNA-Seq 1 (FASTQ format)
+* A file containing RNA-Seq 2 (FASTQ format)
+* Files containing closely related species
+
+### Commands ###################################################################
+
+Put nextflow.config into your working directory.
+If you want to run the preparation phase all at once, type like following.
+phase2.sh requires an argument specifying minimum CDS length. 50 is an example.
+
+'''sh
+nextflow -C nextflow.config run /path/to/pipeline/ginger.nf
+/path/to/pipeline/phase0.sh
+/path/to/pipeline/phase1.sh
+/path/to/pipeline/phase2.sh 50
+/path/to/pipeline/summary.sh
+'''
+
+* "/path/to/pipeline/" a path to a directory <"pipeline/" in GINGER's source tree>
+
+If you want to run each methods separetely in the preparation phase, type like
+following. abinitio.nf must be executed after mapping.nf. The order in which
+denovo.nf and homology.nf are executed do not depend on them.
+
+'''sh
+nextflow -C nextflow.config run /path/to/pipeline/mapping.nf
+nextflow -C nextflow.config run /path/to/pipeline/denovo.nf
+nextflow -C nextflow.config run /path/to/pipeline/abinitio.nf
+nextflow -C nextflow.config run /path/to/pipeline/homology.nf
+/path/to/pipeline/phase0.sh
+/path/to/pipeline/phase1.sh
+/path/to/pipeline/phase2.sh 50
+/path/to/pipeline/summary.sh
+'''
+
+To set a threshold for reconstructed gene structure's scores in the merge phase,
+type like following (use phase1_manual.sh instead of phase1.sh). The first
+argument is the threshold. 1.0 is an example.
+
+'''sh
+/path/to/pipeline/phase1_manual.sh 1.0
+'''
+
+### Final output ###############################################################
+
+The final output is stored in ginger_phase2.gff. Its file format is GFF3.
+See http://gmod.org/wiki/GFF3 for details.
+Statistical information about the output is stored in ginger_stats.tsv.
