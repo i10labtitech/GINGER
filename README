@@ -1,7 +1,10 @@
 # GINGER: Gradual INtegrated GEne Reconstruction
 
+<<<<<<< HEAD
 ## Description #################################################################
 
+=======
+>>>>>>> 188193d80a99275cb238f04871a0fd80de32615f
 GINGER is a tool that is implemented an integrated method for gene
 structure prediction in higher eukaryotes. RNA-Seq-based methods,
 ab initio-based methods, homology-based methods are performed, and then 
