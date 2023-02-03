@@ -1,4 +1,23 @@
-//ver.2 intergenicのスコアの考え方を変更
+/*
+Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+
+This file is part of GINGER.
+
+GINGER is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+GINGER is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with GINGER; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
 #include <vector>
 #include <fstream>
 #include <iostream>
@@ -9,7 +28,6 @@
 
 using namespace std;
 
-//構造体
 struct tgroup
 {
   double weight;
@@ -17,7 +35,6 @@ struct tgroup
   int epos;
 };
 
-//intergenic用の構造体
 struct groupinter
 {
   int gspos;
@@ -33,7 +50,6 @@ struct groupinter2
   double score2;
 };
 
-//weight fileの読み込みhash
 unordered_map<string, double> Weight_hash(const vector<string> &file1)
 {
   string lin;
@@ -47,9 +63,6 @@ unordered_map<string, double> Weight_hash(const vector<string> &file1)
   return hash;
 }
 
-//CDS用のscore hash
-//file1:grouping file
-//190911:グループファイルの9列目に記載されているスコアを使用するように実装を変更する
 unordered_map<string, double> Score_cds_hash(const vector<string> &file1)
 {
   
@@ -61,7 +74,6 @@ unordered_map<string, double> Score_cds_hash(const vector<string> &file1)
   unordered_multimap<int, tgroup> cdshash;
   unordered_map<string, double> cdshash2;
   
-  //全groupに含まれる各ツールごとのexonを探索し、そのスコアを収納するハッシュを構築します
   for(int i=0;i<(int)file1.size();i++){
     lin = file1[i];
     I = Split(lin,'\t');
@@ -88,7 +100,6 @@ unordered_map<string, double> Score_cds_hash(const vector<string> &file1)
     cdshash.insert(pair<int, tgroup>(StoI(I[0]), cdsinfo));
   }
   
-  //上記で構築したハッシュを元に、各exonの実際のスコアを計算、ハッシュを構築します。
   double tmpscore, score;
   unordered_map<string, double> hash;
   for(int i = 0; i < (int)K.size();i++){
@@ -128,8 +139,6 @@ unordered_map<string, double> Score_cds_hash(const vector<string> &file1)
   return hash;
 }
 
-//intron用のscore hash
-//file1:weight file, file2:grouping file
 unordered_map<string, double> Score_intron_hash(const vector<string> &file1){
   
   string lin, tool;
@@ -142,7 +151,6 @@ unordered_map<string, double> Score_intron_hash(const vector<string> &file1){
   unordered_multimap<int,tgroup> intronhash;
   unordered_map<string,double> intronhash2;
   
-  //全groupに含まれる各ツールごとのintronを探索し、そのスコアを収納するハッシュを構築します
   for(int i=0;i<(int)file1.size();i++){
     lin = file1[i];
     I = Split(lin, '\t');
@@ -162,7 +170,6 @@ unordered_map<string, double> Score_intron_hash(const vector<string> &file1){
 	else intronepos = cdsspos - 1;
 	check = true;
       }
-      //それ以外
       else{
 	weight2 = StoD(I[8]);
 	cdsspos = StoI(I[6]);
@@ -183,7 +190,6 @@ unordered_map<string, double> Score_intron_hash(const vector<string> &file1){
     }
   }
 
-  //重複を削除
   sort(KeyVec.begin(),KeyVec.end());
   KeyVec.erase(unique(KeyVec.begin(),KeyVec.end()),KeyVec.end());
 
@@ -195,7 +201,6 @@ unordered_map<string, double> Score_intron_hash(const vector<string> &file1){
     intronhash.insert(pair<int, tgroup>(StoI(I[0]), introninfo));
   }  
   
-  //上記で構築したハッシュを元に、各intronの実際のスコアを計算、ハッシュを構築します。
   double tmpscore, score;
   unordered_map<string, double> hash2;
   for(int i = 0; i < (int)K.size(); i++){
@@ -218,8 +223,6 @@ unordered_map<string, double> Score_intron_hash(const vector<string> &file1){
   return hash2;
 }
 
-//intergenic領域計算用のhash2	file1:group
-//key:groupnum_stat	value:group内に存在するtool名
 unordered_multimap<string, string> Score_intergenic_hash(const vector<string> &file1)
 {
   string lin;
@@ -232,7 +235,6 @@ unordered_multimap<string, string> Score_intergenic_hash(const vector<string> &f
     lin = file1[i];
     I = Split(lin, '\t');
     size_t count = hash.count(I[0]);
-    //keyが存在する場合
     if(count > 0){
       checkp = 0;
       auto range = hash.equal_range(I[0]);
@@ -246,7 +248,6 @@ unordered_multimap<string, string> Score_intergenic_hash(const vector<string> &f
 	hash.insert(pair<string, string>(I[0], I[4]));
       }
     }
-    //keyが存在しない場合
     else{
       hash.insert(pair<string, string>(I[0], I[4]));
     }
@@ -254,8 +255,6 @@ unordered_multimap<string, string> Score_intergenic_hash(const vector<string> &f
   return hash;
 }
 
-//intergenic score計算用のhash3
-//key:groupnum_tool  value:intergenic_score
 unordered_multimap<string,groupinter> Score_intergenic_hash2(const vector<string> &file1){
 
   string lin,key,strand;
@@ -270,7 +269,6 @@ unordered_multimap<string,groupinter> Score_intergenic_hash2(const vector<string
   
   regionmap = get_group_region(file1);
 
-  //group gffからグループ番号区切りの二次元配列を構築する
   vector<string> tmp,tmp2;
   vector<vector<string>> group;
   
@@ -287,7 +285,6 @@ unordered_multimap<string,groupinter> Score_intergenic_hash2(const vector<string
   group.push_back(tmp2);
   tmp2.clear();
 
-  //各グループに対して、存在するツールを特定し、各ツール毎にintergenic領域とそのスコアを特定していく
   for(int i=0;i<(int)group.size();i++){    
 
     vector<string> processed_tool;
@@ -296,7 +293,7 @@ unordered_multimap<string,groupinter> Score_intergenic_hash2(const vector<string
       tmp = Split(group[i][j], '\t');
       key = tmp[0] + "_" + tmp[4];
       gro_num = StoI(tmp[0]);
-      if(tmp[5] == "mRNA"){ //mRNA行を発見したら次の行を参照し、そのスコアとポジションを保存
+      if(tmp[5] == "mRNA"){ 
 	strand = tmp[9];
 	processed_tool.push_back(tmp[4]);
 	spos = 0;
@@ -314,7 +311,7 @@ unordered_multimap<string,groupinter> Score_intergenic_hash2(const vector<string
 	    if(tmp2.back()=="P" || tmp2.back()=="PP" || tmp2.back()=="CP") score_m = 1 - score_m;
 	    epos = StoI(tmp2[7]);
 	  }
-	  while(1){//mRNAの末行に移動し、そのスコアとポジションを保存
+	  while(1){
 	    j++;
 	    if(j==(int)group[i].size()-1) break;
 	    if(Split(group[i][j+1],'\t')[5]=="mRNA")break;
@@ -334,7 +331,6 @@ unordered_multimap<string,groupinter> Score_intergenic_hash2(const vector<string
 	hash.insert(pair<string, groupinter2>(key, groups2));
       }
     }
-    //tool毎にintergenic領域とそのスコアを特定する
     sort(processed_tool.begin(),processed_tool.end());
     processed_tool.erase(unique(processed_tool.begin(),processed_tool.end()),processed_tool.end());
     
@@ -417,7 +413,6 @@ unordered_multimap<string,groupinter> Score_intergenic_hash2(const vector<string
   return output;
 }
 
-//intergenic領域の計算(group内に存在するtoolでの計算)
 double Score_intergenic(int groupnum, int spos, int epos, 
 			 unordered_multimap<string, string> &hash,
 			 unordered_multimap<string,groupinter> &hash2

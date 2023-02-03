@@ -1,3 +1,23 @@
+/*
+Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+
+This file is part of GINGER.
+
+GINGER is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+GINGER is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with GINGER; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
 #include <vector>
 #include <fstream>
 #include <iostream>
@@ -12,21 +32,21 @@ string Replaced_V(string str, string replacestr, int replace);
 
 int main(int argc, char*argv[])
 {
-  //パラメータ数の取得
+
 	if(argc != 3)
 	{
-		cout << "error:パラメーターの数が違います" << endl;
+		cout << "error" << endl;
 		cout << "./a.out [spaln.gff3] [output.gff3]" << endl;
 		return 0;
 	}
-//ファイルの読み込み
+
 	ifstream ifs(argv[1]);
 	if(ifs.fail())
 	{
 		cout << "error:fin file not open" << endl;
 		return 0;
 	}
-//出力ファイル
+
 	ofstream fout(argv[2]);
 	if(fout.fail())
 	{
@@ -43,7 +63,7 @@ int main(int argc, char*argv[])
 	string exonlin1, exonlin2, exonlin3, cdslin1, cdslin2, info, counts;
 	int count = 0;
 	int checkp = 0;
-//fileを行単位で読む
+
 	while(getline(ifs,lin) )
 	{
 		I = Split(lin, '\t');
@@ -115,7 +135,6 @@ int main(int argc, char*argv[])
 }
 
 
-//split関数 使い方 Split(文字列,diliminator('\t'など)）
 vector<string> Split(const string &s, char delim)
 {
 	vector<string> elems;
@@ -131,7 +150,6 @@ vector<string> Split(const string &s, char delim)
 	return elems;
 }
 
-//intをstringに変える関数
 string ItoS(int number)
 {
 	stringstream ss;
@@ -139,7 +157,6 @@ string ItoS(int number)
 	return ss.str();
 }
 
-//あるtabのやつを入れ替える
 string Replaced_V(string str, string replacestr, int replace)
 {
 	string output;

@@ -1,19 +1,38 @@
-#include <iostream>//標準データ入出力
-#include <fstream>//ファイルの入出力
-#include <vector>//vector(動的配列クラス)
-#include <string>//string(文字列クラス)
-#include <sstream>//文字列の入出力
-#include <unordered_map>//unordered_map関数の導入
-#include <map>//map関数の導入
-#include <set>//set関数の導入
-#include <stdlib.h>//絶対値を用いるための関数
+/*
+Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+
+This file is part of GINGER.
+
+GINGER is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+GINGER is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with GINGER; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <sstream>
+#include <unordered_map>
+#include <map>
+#include <set>
+#include <stdlib.h>
 #include <algorithm>
-#include <iomanip>//少数点以下表示
+#include <iomanip>
 #include <time.h>
 using namespace std;
 
 
-//struct宣言
 struct group
 {      
       int st,ed;
@@ -26,14 +45,12 @@ struct group
       };
 };
 
-//関数プロトタイプ宣言
 vector<string> split(const string &str, char sep);
 string ItoS(int number);
 void Grouping(ifstream &ifs);
 void Output(ofstream &fout,vector<group> &Box,int &gro_num);
 
 
-//main関数
 int main(int argc,char**argv)
 {
   ifstream fin; //mapping result
@@ -44,7 +61,6 @@ int main(int argc,char**argv)
     if(ss=="-f"){fin.open(argv[i+1]);}
   }
   
-  //入力ファイルが存在しなかった時の出力
   if(argc<=2){            
     cout << endl;
     cout <<"\t"<<"annotation_grouping tool"<<"\n\n\n";
@@ -66,7 +82,6 @@ int main(int argc,char**argv)
   return 0;
 }
 
-//split関数
 vector<string> split(const string &str, char sep)
 {
   vector<string> v;
@@ -78,7 +93,6 @@ vector<string> split(const string &str, char sep)
       return v;      
 }
 
-//########intをstringに変える関数
 string ItoS(int number)
 {
       stringstream ss;
@@ -89,7 +103,6 @@ string ItoS(int number)
 void Grouping(ifstream &ifs)
 {
        
-//fileを行単位で読みこみ、chr・stでsortする
       ofstream fout("Group.gff");
       string lin;
       group gff;
@@ -101,7 +114,6 @@ void Grouping(ifstream &ifs)
       string strand;
       int gro_num=1;
 
-//一行目
       getline(ifs,lin);
       gff_vec.push_back(lin);
       I = split(lin,'\t');
@@ -134,7 +146,6 @@ void Grouping(ifstream &ifs)
 
 void Output(ofstream &fout,vector<group> &Box,int &gro_num)
 {
-  //Groupingして、mapping_baseの数を確認する(0,1,2>=)
   int ele_num=0,map_num=0,tmpst=Box[0].st,tmped=Box[0].ed;
   string tmpchr=Box[0].chr;
   
@@ -151,7 +162,6 @@ void Output(ofstream &fout,vector<group> &Box,int &gro_num)
 	    fout <<gro_num<<"\t"<<ele_num<<"\t"<<map_num<<"\t"<<Box[j].gff[k]<<"\n";
 	  }
 	}
-	//初期化
 	gro_num++;ele_num=1;map_num=0;
 	tmpst = Box[i].st;
 	tmped = Box[i].ed;  
@@ -165,7 +175,6 @@ void Output(ofstream &fout,vector<group> &Box,int &gro_num)
 	  fout <<gro_num<<"\t"<<ele_num<<"\t"<<map_num <<"\t"<<Box[j].gff[k]<<"\n";
 	}
       }
-      //初期化
       gro_num++;
       ele_num=1;
       map_num=0;

@@ -1,7 +1,25 @@
 #!/bin/sh
 
-LEMON_PATH=`realpath "$0"`
-SCRIPT=`dirname $LEMON_PATH`/../util/merge_phase1
+# Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+# 
+# This file is part of GINGER.
+# 
+# GINGER is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# GINGER is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with GINGER; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+GINGER_PATH=`realpath "$0"`
+SCRIPT=`dirname $GINGER_PATH`/../util/merge_phase1
 
 Gtool=${SCRIPT}/Grouping
 GSub=${SCRIPT}/subgroup
@@ -13,13 +31,13 @@ filter=${SCRIPT}/score_filtering.py
 info=${SCRIPT}/info_annotate.py
 ext_score=${SCRIPT}/extract_score.py
 cutoff=${SCRIPT}/cutoff.py
-sum=${SCRIPT}/sum_of_weight.py
+sum=${SCRIPT}/sum_of_weight.pl
 intronLen=${SCRIPT}/intron_length.py
 intronDist=${SCRIPT}/intron_distribution.py
 refine=${SCRIPT}/refine_mrna_pos.py
 
 if test $# -ne 5 ; then
-    echo "---LEMON pipeline; phase1 (manual filtering mode) ---"
+    echo "---GINGER pipeline; phase1 (manual filtering mode) ---"
     echo "1: all.gff"
     echo "2: genome.fa"
     echo "3: config.ini"
@@ -29,7 +47,7 @@ else
     
     all=`readlink -f $1`
     Genome=`readlink -f $2`
-    w=`python ${sum} $3`
+    w=`perl ${sum} nextflow.config`
     prefix=$4
     n=$5
     
@@ -70,6 +88,8 @@ else
     
     #------------Combining
     
+    sh test.sh
+
     cd ../
     ln -s `pwd`/${prefix}_phase1_result/${prefix}_filter_nosig_polish.gff ./${prefix}_phase1.gff
     

@@ -1,11 +1,31 @@
-#include <iostream>//標準データ入出力
-#include <fstream>//ファイルの入出力
-#include <vector>//vector(動的配列クラス)
-#include <string>//string(文字列クラス)
-#include <sstream>//文字列の入出力
-#include <unordered_map>//unordered_map関数の導入
+/*
+Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+
+This file is part of GINGER.
+
+GINGER is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+GINGER is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with GINGER; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <sstream>
+#include <unordered_map>
 #include <algorithm>
-#include "scoring.hpp" //得点
+#include "scoring.hpp"
 using namespace std;
 
 //------------------------------------ declare function prototype
@@ -63,7 +83,6 @@ int main(int argc,char**argv)
     if(ss=="-a"){out=1;}
   }
   
-  //入力ファイルが存在しなかった時の出力
   if(argc<=2){            
     cout << endl;
     cout <<"\t"<<"Search algorithm"<<"\n\n\n";
@@ -99,12 +118,12 @@ int main(int argc,char**argv)
   cout << "End making hash table\n";
 
   cout << "Start CDS scoring\n";
-  hashcds = Score_cds_hash(group_db); //exonスコアを収納するハッシュを構築
-  hashintron = Score_intron_hash(group_db); //intronスコアを収納するハッシュを構築
+  hashcds = Score_cds_hash(group_db); 
+  hashintron = Score_intron_hash(group_db); 
 
   make_partial_exon_flag(group_db,hash);
-  hashinter = Score_intergenic_hash(group_db); //各グループで予測されている手法を収納するハッシュを構築
-  hashinter2 = Score_intergenic_hash2(group_db); //各グループのintergenicスコアを収納するハッシュを構築
+  hashinter = Score_intergenic_hash(group_db); 
+  hashinter2 = Score_intergenic_hash2(group_db); 
   cout << "End CDS scoring\n";
 
   cout << "Start CDS clustering\n";
@@ -134,7 +153,7 @@ int main(int argc,char**argv)
         if(Vec[9] == "+"){tmp = make_pair(stoi(Vec[6])+stoi(Vec[7])+stoi(Vec[10]),Vec[3]+"\t"+Vec[6]+"\t"+Vec[7]+"\t"+Vec[10]+"\t"+Vec[9]+"\t"+"STbase"+"\t"+"EDbase"+"\t");
         }else{tmp = make_pair(stoi(Vec[6])+stoi(Vec[7])+stoi(Vec[10])+1,Vec[3]+"\t"+Vec[6]+"\t"+Vec[7]+"\t"+Vec[10]+"\t"+Vec[9]+"\t"+"STbase"+"\t"+"EDbase"+"\t");}
         CDStmp.push_back(tmp);
-      }else if(Vec[5] =="mRNA"||Vec[5] =="gene")CDS_set(CDS_list,CDStmp,hash); //前行のCDSをCDS_list / ED_listに格納
+      }else if(Vec[5] =="mRNA"||Vec[5] =="gene")CDS_set(CDS_list,CDStmp,hash); 
     }
     CDS_set(CDS_list,CDStmp,hash);
     CDS_filter(CDS_list); //CDS filtering

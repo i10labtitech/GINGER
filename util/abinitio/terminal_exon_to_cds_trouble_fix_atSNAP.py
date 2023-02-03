@@ -1,19 +1,31 @@
 #coding:utf-8
-#SNAPはexonを予測するため、CDSとしてそのまま翻訳すると"*X"が見られることがある
-#このスクリプトはSNAPのgffをCDSベースに変えるプログラムである。
-#入力は塩基配列、アミノ酸配列、gff配列である
+
+# Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+# 
+# This file is part of GINGER.
+# 
+# GINGER is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# GINGER is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with GINGER; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import sys
 import os
 
 #塩基配列
 fna=open(sys.argv[1],"r")
-#アミノ酸配列(SNAPが出力したアミノ酸配列)
 faa=open(sys.argv[2],"r")
-#gff
 gff=open(sys.argv[3],"r")
 
-#SANP予測のアミノ酸の配列と長さを記録
 faa_dict={}
 data1=""
 for a in faa:
@@ -26,7 +38,7 @@ for a in faa:
 			faa_dict[data1][0]=faa_dict[data1][0]+a
 			faa_dict[data1][1]=faa_dict[data1][1]+len(a)
 faa.close()
-#塩基配列の配列と長さを記録
+
 fna_dict={}
 data2=""
 for n in fna:
@@ -39,7 +51,7 @@ for n in fna:
 			fna_dict[data2][0]=fna_dict[data2][0]+n
 			fna_dict[data2][1]=fna_dict[data2][1]+len(n)
 fna.close()
-#アミノ酸配列と塩基配列を比較
+
 length_fna=len(fna_dict)
 length_faa=len(faa_dict)
 rm_dict={}
@@ -56,7 +68,7 @@ for i in faa_dict:
 		#print(i+"\t"+str(dif))
 		#print("#nucl:"+fna_dict[i][0])
 		#print("#amin:"+faa_dict[i][0])
-#GFFの処理
+
 n=0
 tmp=open(sys.argv[3]+".tmp","w")
 for g in gff:
@@ -80,23 +92,19 @@ for t in tmp2:
 	if word in rm_dict:
 		strand=tt[0].split("\t")[6]
 		if strand=="+":
-			#mrnaの値を変更
 			mrna=tt[0].split("\t")
 			num=int(mrna[4]) - rm_dict[word]
 			mrna[4]=str(num)
 			tt[0]="\t".join(mrna)
-			#CDSの値変更
 			cds=tt[-1].split("\t")
 			num=int(cds[4]) - rm_dict[word]
 			cds[4]=str(num)
 			tt[-1]="\t".join(cds)
 		elif strand=="-":
-			#mrnaの値を変更
 			mrna=tt[0].split("\t")
 			num=int(mrna[3]) + rm_dict[word]
 			mrna[3]=str(num)
 			tt[0]="\t".join(mrna)
-			#CDSの値を変更
 			cds=tt[-1].split("\t")
 			num=int(cds[3]) + rm_dict[word]
 			cds[3]=str(num)

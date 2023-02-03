@@ -1,25 +1,43 @@
-#include <iostream>//標準データ入出力
-#include <fstream>//ファイルの入出力
-#include <vector>//vector(動的配列クラス)
-#include <string>//string(文字列クラス)
-#include <sstream>//文字列の入出力
-#include <unordered_map>//unordered_map関数の導入
-#include <map>//map関数の導入
-#include <set>//set関数の導入
-#include <stdlib.h>//絶対値を用いるための関数
+/*
+Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+
+This file is part of GINGER.
+
+GINGER is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+GINGER is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with GINGER; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <sstream>
+#include <unordered_map>
+#include <map>
+#include <set>
+#include <stdlib.h>
 #include <algorithm>
-#include <iomanip>//少数点以下表示
+#include <iomanip>
 #include <time.h>
 #include "function.hpp"
 using namespace std;
 
-//関数プロトタイプ宣言
 void repair(ifstream &ifs);
 void calculate(ifstream &fin2,int num,int flag);
 void calculate_fix(ifstream &fin1);
 void longestc(ifstream &fin1);
 
-//main関数
 int main(int argc,char**argv)
 {
       ifstream fin; //mapping result
@@ -36,7 +54,6 @@ int main(int argc,char**argv)
             if(ss=="-l"){flag=4;}
       }
 
-//入力ファイルが存在しなかった時の出力
       if(argc<=2){            
             cout << endl;
             cout <<"\t"<<"Gff_filter tool"<<"\n\n\n";
@@ -83,9 +100,8 @@ void repair(ifstream &ifs)
       int checkp2 = 0;
       string lin, genelin;
       vector<string> I;
-      ofstream fout("repaired.gff"); //出力ファイル      
+      ofstream fout("repaired.gff"); 
 
-//fileを行単位で読む
       while(getline(ifs,lin) )
       {
             I = Split(lin,'\t');
@@ -120,9 +136,8 @@ void calculate(ifstream &fin,int num,int flag)
       string lin;
       int CDSlen=0;
       vector<string> ON,CDS;
-      ofstream fout1("filtered.gff"); //出力ファイル
+      ofstream fout1("filtered.gff"); 
       
-//1行目処理
       getline(fin,lin);
       CDS.push_back(lin);
       
@@ -164,7 +179,7 @@ void calculate(ifstream &fin,int num,int flag)
                   }
             }
       }
-//最終行
+
       if(flag==0){
             if(CDS.size() == num+1){
                   for(int i=0;i<CDS.size();i++){
@@ -189,16 +204,13 @@ void calculate(ifstream &fin,int num,int flag)
 }
 
 
-//mapping結果で置換
 void calculate_fix(ifstream &fin1)
 {
       string lin,lin3;
       int st=2147483647,ed=0;
       vector<string> ON,ON2,TMP;
       ofstream fout("Gene_region_repair.gff");
-      //mappingの出力結果をvectorに格納
       getline(fin1,lin);
-      //最初のmRNA
       lin3=lin;
       while(getline(fin1,lin)){
             ON = Split(lin,'\t');
@@ -221,7 +233,6 @@ void calculate_fix(ifstream &fin1)
                   ON2.push_back(lin);     
             }     
       }
-      //最後の1mRNA
       TMP =  Split(lin3,'\t');
       fout << TMP[0]<<"\t"<<TMP[1]<<"\t"<<TMP[2]<<"\t"<<st<<"\t"<<ed<<"\t"<<TMP[5]<<"\t"<<TMP[6]<<"\t"<<TMP[7]<<"\t"<<TMP[8]<< "\n";
       for(int i=0;i<ON2.size();i++){
@@ -229,7 +240,6 @@ void calculate_fix(ifstream &fin1)
       }      
 }
 
-//被っている遺伝子Longestの結果にしぼりこむ
 void longestc(ifstream &fin1)
 {      
       ofstream fout("longest.gff");

@@ -1,5 +1,25 @@
 #!/usr/bin/env nextflow
 
+/*
+Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+
+This file is part of GINGER.
+
+GINGER is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+GINGER is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with GINGER; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
 if (file(params.PDIR_PREP_MAPPING).isDirectory()) {
     error "The publish directory already exists: \"${params.PDIR_PREP_MAPPING}\""
 } else {
@@ -42,12 +62,12 @@ process mapping {
     mkdir !{params.OPREFIX}_tmp_index
     mkdir tmp_mapping_!{params.OPREFIX}
     
-    # mapping
+    # Mapping
     !{params.HISAT2BUILD} -p !{params.N_THREAD} !{genomeFasta} !{params.OPREFIX}_tmp_index/!{params.OPREFIX}_index
     !{params.HISAT2} -p !{params.N_THREAD} -x !{params.OPREFIX}_tmp_index/!{params.OPREFIX}_index -1 !{rnaSeqRead1} -2 !{rnaSeqRead2} -S tmp_mapping_!{params.OPREFIX}/!{params.OPREFIX}.sam --dta --no-discordant --no-mixed
     !{params.SAMTOOLS} view -bS -@ !{params.N_THREAD} tmp_mapping_!{params.OPREFIX}/!{params.OPREFIX}.sam | !{params.SAMTOOLS} sort -@ !{params.N_THREAD} -o tmp_mapping_!{params.OPREFIX}/!{params.OPREFIX}.sorted.bam
     
-    # gene prediction
+    # Gene prediction
     !{params.STRINGTIE} -p !{params.N_THREAD} -o !{params.OPREFIX}.gtf tmp_mapping_!{params.OPREFIX}/!{params.OPREFIX}.sorted.bam
     '''
 }
@@ -66,45 +86,31 @@ process to_merge {
     
     shell:
     '''
-    #genome配列をupper caseで統一
     !{params.SEQKIT} seq -u !{genomeFasta} > !{params.OPREFIX}_tmpgenome.fa
     
-    #strandの付いていないsingle exonを分離
     awk '$7 == "."' !{gtf} > !{params.OPREFIX}_single.gtf
     
-    #gtfからmRNA配列fastaを作成
     !{params.UTILPATH_MAPPING}/gtf_genome_to_cdna_fasta.pl !{params.OPREFIX}_single.gtf !{params.OPREFIX}_tmpgenome.fa > !{params.OPREFIX}_single.fa
     
-    #single exon最長ORF検出
     !{params.UTILPATH_MAPPING}/ORF_finder !{params.OPREFIX}_single.fa !{params.OPREFIX}_single_orf !{params.MIN0} false
     
-    #single exonのstats作成
     !{params.SEQKIT} fx2tab -nl !{params.OPREFIX}_single_orf.cds | awk '{print $1"\t"$2"\t"$5}' > !{params.OPREFIX}_single_orf.list
     
-    #1 gene 1 transcriptのリスト作成
     !{params.UTILPATH_MAPPING}/longest_transcript !{params.OPREFIX}_single_orf.list > !{params.OPREFIX}_single_orf_longest.list
     
-    #1 gene 1 transcriptになるようにgffをトリム
     !{params.UTILPATH_MAPPING}/gff_trimmer !{params.OPREFIX}_single_orf.gff3 !{params.OPREFIX}_single_orf_longest.list !{params.OPREFIX}_single_orf_longest.gff3
     
-    #strandの追記
     !{params.UTILPATH_MAPPING}/strand_replace !{params.OPREFIX}_single_orf_longest.gff3 !{gtf} !{params.OPREFIX}_replace.gtf
     
-    #orfが取れないsingle exonを削除
     awk '$7 != "."' !{params.OPREFIX}_replace.gtf > !{params.OPREFIX}_new.gtf
     
-    #gtfからmRNA配列fastaを作成
     !{params.UTILPATH_MAPPING}/gtf_genome_to_cdna_fasta.pl !{params.OPREFIX}_new.gtf !{params.OPREFIX}_tmpgenome.fa > !{params.OPREFIX}.fa
     
-    #gtf -> gff変換
     !{params.UTILPATH_MAPPING}/gtf_to_alignment_gff3.pl !{params.OPREFIX}_new.gtf > !{params.OPREFIX}.gff3
     
-    #最長ORF検出
-    # !{params.UTILPATH_MAPPING}/ORF_finder !{params.OPREFIX}.fa !{params.OPREFIX}_orf !{params.MIN0} true
     !{params.TD_LONGORFS} -t !{params.OPREFIX}.fa -m !{params.MIN0} -S
     !{params.TD_PREDICT} -t !{params.OPREFIX}.fa 
     
-    #genome baseのgff3に変換
     !{params.UTILPATH_MAPPING}/cdna_alignment_orf_to_genome_orf.pl !{params.OPREFIX}.fa.transdecoder.gff3 !{params.OPREFIX}.gff3 !{params.OPREFIX}.fa > !{params.OPREFIX}_merge.gff3
     '''
 }
@@ -124,43 +130,30 @@ process to_learn_1st {
 
     shell:
     '''
-    #genome配列をupper caseで統一
     !{params.SEQKIT} seq -u !{genomeFasta} > !{params.OPREFIX}_tmpgenome.fa
     
-    #multi exon transcriptの取得
     !{params.UTILPATH_MAPPING}/exon_num_filter !{gtf} !{params.OPREFIX}_multi.gtf 2 10000
     
-    #gtfからmRNA配列fastaを作成
     !{params.UTILPATH_MAPPING}/gtf_genome_to_cdna_fasta.pl !{params.OPREFIX}_multi.gtf !{params.OPREFIX}_tmpgenome.fa > !{params.OPREFIX}_multi.fa
     
-    #gtf -> gff変換
     !{params.UTILPATH_MAPPING}/gtf_to_alignment_gff3.pl !{params.OPREFIX}_multi.gtf > !{params.OPREFIX}_multi.aln.gff3
     
-    #最長ORF検出
     !{params.UTILPATH_MAPPING}/ORF_finder !{params.OPREFIX}_multi.fa !{params.OPREFIX}_multi_orf !{params.MIN1} true
     
-    #1 gene 1 transcriptにするためのstats取得
     !{params.SEQKIT} fx2tab -nl !{params.OPREFIX}_multi_orf.cds | awk '{print $1"\t"$2"\t"$5}' > !{params.OPREFIX}_multi_orf.list
     
-    #1 gene 1 transcriptのリスト作成
     !{params.UTILPATH_MAPPING}/longest_transcript !{params.OPREFIX}_multi_orf.list > !{params.OPREFIX}_multi_orf_longest.list
     
-    #1 gene 1 transcriptのgff作成
     !{params.UTILPATH_MAPPING}/gff_trimmer !{params.OPREFIX}_multi_orf.gff3 !{params.OPREFIX}_multi_orf_longest.list !{params.OPREFIX}_multi_orf_longest.gff3
     
-    #1 gene 1 transcriptのgff3からfastaを作成
     !{params.GFFREAD} -x !{params.OPREFIX}_multi_orf_longest.cds -g !{params.OPREFIX}_multi.fa !{params.OPREFIX}_multi_orf_longest.gff3
     
-    #重複配列の削除
     !{params.CD_HIT} -c 1.0 -i !{params.OPREFIX}_multi_orf_longest.cds -o !{params.OPREFIX}_multi_orf_longest_nr.cds
     
-    #配列名のリストを作成
     !{params.SEQKIT} seq -n !{params.OPREFIX}_multi_orf_longest_nr.cds | awk '{print $1}' > !{params.OPREFIX}_multi_orf_longest_nr.list
     
-    #リストからgffを作成
     !{params.UTILPATH_MAPPING}/gff_trimmer !{params.OPREFIX}_multi_orf_longest.gff3 !{params.OPREFIX}_multi_orf_longest_nr.list !{params.OPREFIX}_multi_orf_longest_nr.gff3
     
-    #genome baseのgff3を作成
     !{params.UTILPATH_MAPPING}/cdna_alignment_orf_to_genome_orf.pl !{params.OPREFIX}_multi_orf_longest_nr.gff3 !{params.OPREFIX}_multi.aln.gff3 !{params.OPREFIX}_multi.fa > !{params.OPREFIX}_learn_1st.gff3
     '''
 }
@@ -180,32 +173,23 @@ process to_learn_2nd {
 
     shell:
     '''
-    #repeat databaseの構築
     awk '$11 != "Simple_repeat" && $11 != "Low_complexity" {print $5"\t"$6"\t"$7"\t"$11}' !{genomeRepOut} | sed -e '1,3d' > repeat_DB.tsv
     
-    #genome databaseの構築
     !{params.SEQKIT} fx2tab -inl !{genomeFasta} | awk '{print $1"\t"$2}' | sed -e '/^$/d' > genome_DB.tsv
     
-    #annotation databaseの構築
     awk '$3 == "exon" {print $1"\t"$4"\t"$5"\t"$9}' !{gff3_1st} | sed -e '/^$/d' > annotation_DB.tsv
     
-    #repeat重複配列の検索
     !{params.UTILPATH_MAPPING}/repeat_checker genome_DB.tsv repeat_DB.tsv annotation_DB.tsv repeat_output.tsv
     
-    #repeatを含むexonのリストを作成
     awk '$2 != 0 {print $1}' repeat_output.tsv > repeat_output.list
     
-    #ID抽出
     !{params.UTILPATH_MAPPING}/tag_trimmer repeat_output.list Parent | sort | uniq > repeat_output.id
     
-    #全transcriptのID抽出
     awk '$3 == "mRNA" {print $9}' !{gff3_1st} > !{params.OPREFIX}_all.tag
     !{params.UTILPATH_MAPPING}/tag_trimmer !{params.OPREFIX}_all.tag ID > !{params.OPREFIX}_all.id
     
-    #差集合をとってnon-repeatのmRNA配列を抽出
     !{params.UTILPATH_MAPPING}/set_difference !{params.OPREFIX}_all.id repeat_output.id norep_output.id
     
-    #gff作成
     !{params.UTILPATH_MAPPING}/gff_trimmer !{gff3_1st} norep_output.id !{params.OPREFIX}_learn_2nd.gff3
     '''
 }

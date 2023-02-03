@@ -1,5 +1,22 @@
-//reference fastaを修正する 
-//塩基配列を小文字を大文字にとか、fastaの名前を簡略化したりとか
+/*
+Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+
+This file is part of GINGER.
+
+GINGER is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+GINGER is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with GINGER; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 
 #include <vector>
 #include <fstream>
@@ -13,21 +30,21 @@ using namespace std;
 
 int main(int argc, char*argv[])
 {
-  //パラメータ数の取得
+
 	if(argc != 3)
 	{
-		cout << "error:パラメーターの数が違います" << endl;
+		cout << "error" << endl;
 		cout << "./fastarepair [prerepair.fa] [output]" << endl;
 		return 0;
 	}
-//ソートしたいファイルの読み込み
+
 	ifstream ifs(argv[1]);
 	if(ifs.fail())
 	{
 		cout << "error:fin file not open" << endl;
 		return 0;
 	}
-//出力ファイル
+
 	ofstream fout(argv[2]);
 	if(fout.fail())
 	{
@@ -40,7 +57,7 @@ int main(int argc, char*argv[])
 	string lin;
 
 	string tmpstr;
-//fileを行単位で読む
+
 	while(getline(ifs,lin) )
 	{
 		string::size_type p1 = lin.find(">");

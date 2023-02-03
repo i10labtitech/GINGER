@@ -1,5 +1,23 @@
 #coding:utf-8
 
+# Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+# 
+# This file is part of GINGER.
+# 
+# GINGER is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# GINGER is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with GINGER; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
 import sys
 import random
 import os
@@ -9,11 +27,10 @@ if vr == 2:
 elif vr == 3:
 	string=str
 
-genome=open(sys.argv[1],"r") #snapの予測に用いたゲノム配列(データの名前はシンプルに)
-faa=open(sys.argv[2],"r") #snapが出力するアミノ酸配列
-gff=open(sys.argv[3],"r") #.evm.gffのファイルではなくてlemon
+genome=open(sys.argv[1],"r")
+faa=open(sys.argv[2],"r")
+gff=open(sys.argv[3],"r")
 
-#1.ゲノム配列から1データ1行のファイルを作成
 g1_tag=str(random.randrange(1000000))+"_"+str(random.randrange(1000000))+"_"+str(random.randrange(1000000))+"_"+str(random.randrange(1000000))
 g1=open("genome."+g1_tag+".g1","w")
 n=0
@@ -33,7 +50,6 @@ g1.write("\n")
 genome.close()
 g1.close()
 ##########################################
-#2.step1のファイルから辞書を作成
 dict_genome={}
 g2=open("genome."+g1_tag+".g1","r")
 for e in g2:
@@ -43,7 +59,6 @@ for e in g2:
 g2.close()
 os.system("rm genome."+g1_tag+".g1")
 #########################################
-#3.遺伝子配列から1データ1行のファイルを作成
 f1_tag=str(random.randrange(1000000))+"_"+str(random.randrange(1000000))+"_"+str(random.randrange(1000000))+"_"+str(random.randrange(1000000))
 f1=open("gene."+f1_tag+".f1","w")
 m=0
@@ -64,7 +79,6 @@ f1.write("\n")
 faa.close()
 f1.close()
 ##########################################
-#4.step3のファイルからinframeな配列のIDを取得
 f_f=open("gene."+f1_tag+".f1","r")
 e_box=[]
 for z in f_f:
@@ -77,7 +91,6 @@ for z in f_f:
 f_f.close()
 #print(e_box)
 ##########################################
-#5.step3のファイルから辞書を作成
 dict_gene={}
 f2=open("gene."+f1_tag+".f1","r")
 for a in f2:
@@ -93,7 +106,6 @@ os.system("rm gene."+f1_tag+".f1")
 #	print(dict_gene[t])
 ########################################
 #########################################
-#6.gffを参照し、frameを辞書に入れる
 tmp_tag=str(random.randrange(1000000))+"_"+str(random.randrange(1000000))+"_"+str(random.randrange(1000000))+"_"+str(random.randrange(1000000))
 #print(tmp_tag)
 #tmp_tag=sys.argv[1].split("/")[-1]+"."+sys.argv[2].split("/")[-1]+"."+sys.argv[3].split("/")[-1]
@@ -140,7 +152,6 @@ gff.close()
 #       print(">"+t)
 #       print(dict_gs[t])
 ########################################
-#7.コドン表を作成
 DNA2Protein = {
         'TTT' : 'F', 'TCT' : 'S', 'TAT' : 'Y', 'TGT' : 'C',
         'TTC' : 'F', 'TCC' : 'S', 'TAC' : 'Y', 'TGC' : 'C',
@@ -166,7 +177,6 @@ DNA2Protein = {
         'ACN' : 'T', 'GCN' : 'A', 'CGN' : 'R', 'GGN' : 'G',
 }
 #######################################
-#8.frameを特定
 dict_tran={}
 for l in box:
 	dict_tran[l]={}
@@ -211,7 +221,6 @@ for l in box:
 		print("#>"+l+"_nucl\n#"+seq0)
 	#print(l+"\t"+str(dict_tran[l]))
 #######################################
-#9.特定したframeをgffの最初のCDSに書き込む&inframeな配列を取り除く
 gff_2nd=open("tmp."+tmp_tag+".tmp","r") 
 #print(tmp_tag)
 check_box=[]

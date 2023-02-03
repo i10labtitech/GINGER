@@ -1,5 +1,25 @@
 #!/usr/bin/env nextflow
 
+/*
+Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+
+This file is part of GINGER.
+
+GINGER is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+GINGER is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with GINGER; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
 if (file(params.PDIR_PREP_DENOVO).isDirectory()) {
     error "The publish directory already exists: \"${params.PDIR_PREP_DENOVO}\""
 } else {
@@ -32,7 +52,6 @@ process trinity {
     path rnaSeqRead2 from params.INPUT_RNASEQR2
     
     output:
-//    file "${params.OPREFIX_TRINITY}"
     file "${params.OPREFIX_TRINITY}.Trinity.fasta" into trinityFasta
     file "${params.OPREFIX_TRINITY}.Trinity.fasta.gene_trans_map"
 
@@ -54,9 +73,8 @@ process trinity {
     '''
     !{preprocessing}
 
-    # trinityでassemble
+    # Assembling with Trinity
     mkdir !{params.OPREFIX_TRINITY}
-    # ---- 1. Trinityでde novo transcriptome
     time !{params.TRINITY} --seqType fq --left rnaseq_1_renamed.fastq --right rnaseq_2_renamed.fastq --output !{params.OPREFIX_TRINITY} --CPU !{params.N_THREAD} --max_memory !{params.MAX_MEMORY} --full_cleanup
     '''
 }

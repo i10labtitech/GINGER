@@ -1,5 +1,25 @@
 #!/usr/bin/env nextflow
 
+/*
+Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+
+This file is part of GINGER.
+
+GINGER is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+GINGER is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with GINGER; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
 if (file(params.PDIR_PREP_HOMOLOGY).isDirectory()) {
     error "The publish directory already exists: \"${params.PDIR_PREP_HOMOLOGY}\""
 } else {
@@ -31,7 +51,6 @@ process homology {
 
     input:
     path genomeFasta from params.INPUT_GENOME
-//    val hd from hDataCh
     val prefix  from hDataChPrefix
     path protein from hDataChProtein
     val spalndb from hDataChSpalndb
@@ -46,34 +65,22 @@ process homology {
 
     shell:
     '''
-#    echo "start homology"
-#    echo "!{genomeFasta} !{protein} !{spalndb} !{params.N_THREAD} !{params.OPREFIX}"
-
-    #spaln動かすためスクリプトの用意
-#    cp !{params.UTILPATH_HOMOLOGY}/Makefile .
-#    cp !{params.UTILPATH_HOMOLOGY}/catchr.pl .
     cp !{params.MAKBLK} . # used in makeidx.pl
-#    cp !{params.UTILPATH_HOMOLOGY}/makeidx.pl .
-#    cp !{params.UTILPATH_HOMOLOGY}/function.hpp .
 
-#    echo "start spaln"
-
-    #spalnを動かす前処理
+    # Preprocessing
     !{params.UTILPATH_HOMOLOGY}/fastarepair !{genomeFasta} refer.mfa
     !{params.UTILPATH_HOMOLOGY}/fastarepair2 !{protein} relate.faa
 
-    #spalnを動かす
+    # Spaln
     export PATH=./:\$PATH
     !{params.MAKEIDX} -ip refer.mfa
 
-    #exon identity計測用splan result
+    # Exon identity calculation
     !{params.SPALN} -Q7 -O4 -ospalnresult_o4 -M -yS# -T!{spalndb} -yB# -yZ -t!{params.N_THREAD} -drefer relate.faa 
     mv spalnresult_o4 !{params.OPREFIX}_spalnresult_alignment.tsv
     
-    #gff作成
+    # Output file 
     python !{params.UTILPATH_HOMOLOGY}/o4_to_gff.py !{params.OPREFIX}_spalnresult_alignment.tsv !{prefix} > !{prefix}_spalnresult.gff
-
-#    echo "finish_homology"
     '''
 }
 

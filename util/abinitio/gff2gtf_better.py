@@ -1,5 +1,23 @@
 #coding:utf-8
 
+# Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+# 
+# This file is part of GINGER.
+# 
+# GINGER is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# GINGER is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with GINGER; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.i
+
 import sys
 
 infile = open(sys.argv[1],"r")
@@ -45,10 +63,10 @@ for i in infile:
 					print(ii[0]+"\t"+ii[1]+"\t"+ii[2]+"\t"+ii[3]+"\t"+ii[4]+"\t"+ii[5]+"\t"+ii[6]+"\t"+ii[7]+"\t"+t4)
 			if len(ii) <= 8:
 				s += 1
-				errlog.write("Error"+str(s)+"：列数少ない行があるみたい\n")
+				errlog.write("Error"+str(s)+": seems to be a row with a small number of columns\n")
 if s == 0:
-	errlog.write("無事にError無く終わりましたよ\n")
+	errlog.write("Finished\n")
 elif s > 0:
-	errlog.write("合計"+str(s)+"のErrorが見つかりましたよ\n")
+	errlog.write("Total "+str(s)+" erros found\n")
 
 

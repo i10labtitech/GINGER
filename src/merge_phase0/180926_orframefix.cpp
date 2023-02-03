@@ -1,11 +1,31 @@
-#include <iostream>//標準データ入出力
-#include <fstream>//ファイルの入出力
-#include <vector>//vector(動的配列クラス)
-#include <string>//string(文字列クラス)
-#include <sstream>//文字列の入出力
-#include <stdlib.h>//絶対値を用いるための関数
+/*
+Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+
+This file is part of GINGER.
+
+GINGER is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+GINGER is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with GINGER; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <sstream>
+#include <stdlib.h>
 #include <algorithm>
-#include <iomanip>//少数点以下表示
+#include <iomanip>
 #include <time.h>
 using namespace std;
 
@@ -25,7 +45,6 @@ int main(int argc,char**argv)
             if(ss=="-o"){fout.open(argv[i+1]);}
       }
 
-//入力ファイルが存在しなかった時の出力
       if(argc<=2){            
             cout << endl;
             cout <<"\t"<<"ORFframe repair tool"<<"\n\n\n";
@@ -44,7 +63,6 @@ int main(int argc,char**argv)
       int flag=0;
 
 
-      //1行目の処理
       getline(fin,lin);
       fout << lin <<"\n";
       tmp = split(lin,'\t');
@@ -52,11 +70,9 @@ int main(int argc,char**argv)
       else{cout <<"strandが記載されていません\n";return 1;}
       
 
-      //全て
       while(getline(fin,lin)){
             tmp = split(lin,'\t');      
             if(tmp[2] == "mRNA"||tmp[2] == "gene"){      
-                  //前のCDSsetの処理
                   sort(CDS.begin(),CDS.end());
                   if(flag==1){reverse(CDS.begin(),CDS.end());}
                   int orf=0;
@@ -64,7 +80,7 @@ int main(int argc,char**argv)
                   for(int i=0;i<CDS.size();i++){
                         tmp = split(CDS[i].second,'\t');
                         fout << tmp[0] <<"\t"<<tmp[1] <<"\t"<<tmp[2] <<"\t"<<tmp[3] <<"\t"<<tmp[4] <<"\t"<<tmp[5] <<"\t"<<tmp[6] <<"\t"<<orf<<"\t"<<tmp[8] <<"\n";
-                        orf =(stoi(tmp[4])-stoi(tmp[3])+1+orf)%3; //次のORFfragを保存
+                        orf =(stoi(tmp[4])-stoi(tmp[3])+1+orf)%3; 
                   }
                   CDS.clear();
                   fout << lin <<"\n";
@@ -77,14 +93,13 @@ int main(int argc,char**argv)
                   CDS.push_back(make_pair(stoi(tmp[3]),lin));}
       }
 
-      //最終行だけ別途処理
       sort(CDS.begin(),CDS.end());
       if(flag==1){reverse(CDS.begin(),CDS.end());}
       int orf=0;
       for(int i=0;i<CDS.size();i++){
             tmp = split(CDS[i].second,'\t');
             fout << tmp[0] <<"\t"<<tmp[1] <<"\t"<<tmp[2] <<"\t"<<tmp[3] <<"\t"<<tmp[4] <<"\t"<<tmp[5] <<"\t"<<tmp[6] <<"\t"<<orf<<"\t"<<tmp[8] <<"\n";
-            orf =(stoi(tmp[4])-stoi(tmp[3])+1+orf)%3; //次のORFfragを保存
+            orf =(stoi(tmp[4])-stoi(tmp[3])+1+orf)%3; 
       }
       return 0;
 }

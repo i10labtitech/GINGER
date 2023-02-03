@@ -1,8 +1,28 @@
-maker2zff from maker
+## Description
+GINGER: Gradual INtegrated GEne Reconstruction
 
-catchr.pl from spaln
-homology/catchr.pl:#!/usr/bin/perl
-homology/makblk.pl:#!/usr/bin/perl
-homology/makeidx.pl:#!/usr/bin/perl
+GINGER is a tool that is implemented an integrated method for gene gene
+structure prediction in higher eukaryotes. RNA-Seq-based methods,
+ab initio-based methods, homology-based methods are performed, and then 
+gene structures are reconstructed via dynamic programming with appropriately
+weighted and scored exon/intron/intergenic regions. Different prediction
+processes and filtering criteria are applied to multi-exon and single-exon
+genes. This pipeline is implemented using Nextflow, which allows for the
+efficient and effective use of computing resources.
 
-seqkit from seqkit
+## Web site
+
+## Requirements
+
+See INSTALL.
+
+## Installation
+
+See INSTALL.
+
+## Synopsis
+### Inputs
+
+### Commands
+
+### Final output

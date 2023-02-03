@@ -1,19 +1,22 @@
-//Split(str,'char')
-//StoI(str), StoD(str), ItoS(num)
-//Erace(string, string)
-//PChange(string nucl), PChangemt(string nucl)
-//vector<int> Histmake(vector<double> V, double stepsize, int max)
-//string Greverse(string frev)
-//string Reverseorder(string pre)
-//string stoS(string bef),  string Stos(string bef)
-//unordered_map<string,string> Fasta_Hash(fstream &file)
-//	ex) 
-//	ifstream ifs(argv[1]);
-//	unordered_map<string,string> fhash;
-//	fhash = Fasta_Hash(ifs);
-//vector<vector<string> > Fasta_V(fstream &file)
-//string Replaced_V(string str, string replacestr, int replace)
-//string Replace (string 置換前, string 置換されたいやつ, string 置換したいやつ)
+/*
+Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+
+This file is part of GINGER.
+
+GINGER is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+GINGER is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with GINGER; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 
 //
 #include <vector>
@@ -26,7 +29,6 @@
 
 using namespace std;
 
-//split関数 使い方 Split(文字列,diliminator('\t'など)）
 vector<string> Split(const string &s, char delim)
 {
 	vector<string> elems;
@@ -42,7 +44,6 @@ vector<string> Split(const string &s, char delim)
 	return elems;
 }
 
-//stringをintに変える関数
 int StoI(string str)
 {
 	int number;
@@ -51,7 +52,6 @@ int StoI(string str)
 	return number;
 }
 
-//stringをintに変える関数
 double StoD(string str)
 {
 	double number;
@@ -60,7 +60,6 @@ double StoD(string str)
 	return number;
 }
 
-//intをstringに変える関数
 string ItoS(int number)
 {
 	stringstream ss;
@@ -68,7 +67,6 @@ string ItoS(int number)
 	return ss.str();
 }
 
-//文字列からある文字だけを削除
 string Erace(string testString, string tmp)
 {
 	for(int c = testString.find_first_of(tmp); c != string::npos; c = c = testString.find_first_of(tmp))
@@ -78,7 +76,6 @@ string Erace(string testString, string tmp)
 	return testString;
 }
 
-//peptide変換
 string PChange(string nucl)
 {
 	string nucl2, prot;
@@ -201,7 +198,6 @@ string PChange(string nucl)
 }
 
 
-//histgram作成関数
 vector<int> Histmake(vector<double> V, double stepsize, int max)
 {
 	vector<int> V2(max,0);
@@ -235,7 +231,6 @@ vector<int> Histmake(vector<double> V, double stepsize, int max)
 }
 
 
-//文字列を逆にするreverseorder関数
 string Reverseorder(string pre)
 {
 	string rev;
@@ -246,7 +241,6 @@ string Reverseorder(string pre)
 	return(rev);
 }
 
-//Reverse 関数（-ストランド変換）
 string Greverse(string frev)
 {
 	string rev;
@@ -276,7 +270,6 @@ string Greverse(string frev)
 	return(rev);
 }
 
-// 小文字を大文字にかえる関数 stoS
 string stoS(string bef)
 {
 	transform(bef.begin(), bef.end(), bef.begin(), ::toupper);
@@ -284,14 +277,12 @@ string stoS(string bef)
 }
 
 
-// 小文字を大文字にかえる関数 Stos
 string Stos(string bef)
 {
 	transform(bef.begin(), bef.end(), bef.begin(), ::tolower);
 	return(bef);
 }
 
-//Hashfasta 
 unordered_map<string,string> Fasta_Hash(istream &file)
 {
 	unordered_map<string,string> hash;
@@ -318,7 +309,6 @@ unordered_map<string,string> Fasta_Hash(istream &file)
 	return hash;
 }
 
-//vector_fasta 
 vector<vector<string> > Fasta_V(istream &file)
 {
 	vector<string> V;
@@ -352,7 +342,6 @@ vector<vector<string> > Fasta_V(istream &file)
 	return VV;
 }
 
-//あるtabのやつを入れ替える
 string Replaced_V(string str, string replacestr, int replace)
 {
 	string output;

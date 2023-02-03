@@ -1,19 +1,38 @@
-#include <iostream>//標準データ入出力
-#include <fstream>//ファイルの入出力
-#include <vector>//vector(動的配列クラス)
-#include <string>//string(文字列クラス)
-#include <sstream>//文字列の入出力
-#include <unordered_map>//unordered_map関数の導入
-#include <map>//map関数の導入
-#include <set>//set関数の導入
-#include <stdlib.h>//絶対値を用いるための関数
+/*
+Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+
+This file is part of GINGER.
+
+GINGER is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+GINGER is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with GINGER; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <sstream>
+#include <unordered_map>
+#include <map>
+#include <set>
+#include <stdlib.h>
 #include <algorithm>
-#include <iomanip>//少数点以下表示
+#include <iomanip>
 #include <time.h>
 using namespace std;
 
 //-----------------------------------  declare struct
-//struct宣言
 struct group
 {
       int len;
@@ -27,7 +46,6 @@ struct group
       };
 
 };
-//struct宣言
 struct group2
 {
       int st,ed;
@@ -120,10 +138,10 @@ void Genome(ifstream &fin1,unordered_map<string,string>&hash)
 {
       string line;
       string g,h;
-      //最初の一行だけ先に配列に格納
+
       getline(fin1,line);
       g=(line.substr(1));
-      //全データを格納していく
+
       while(getline(fin1,line)){
             if(line.find('>') != string::npos){
                   //register scaffold
@@ -146,7 +164,6 @@ void CDS_set(vector<pair<int , string> >&CDS_list,vector<pair<int,string> >&CDSt
 	    int frame = frame_convert(stoi(Vec[3]));
 	    int r_frame = (stoi(Vec[2])-stoi(Vec[1])+1-frame)%3;
             if(CDStmp.size()==1){
-                  //single exon geneの処理なら
 	      string w = hash[Vec[0]].substr(stoi(Vec[1])-1+frame,3);
 	      string w2 = hash[Vec[0]].substr(stoi(Vec[2])-3-r_frame,3);
                   if(Vec[4]=="+"){
@@ -164,7 +181,6 @@ void CDS_set(vector<pair<int , string> >&CDS_list,vector<pair<int,string> >&CDSt
                   else{CDStmp[i].second+="4";}
             }
             
-            //Initial exonになるpotentialを持っているCDS全て、Initial exon候補として扱う
             else if(Vec[4]=="+"){
                   if(i!= (CDStmp.size()-1)){
                         if(Vec[3]=="0"){
@@ -214,21 +230,17 @@ int filter_fuc(string st1, string st2,unordered_map<string,string>&hash,int &st,
       vector<string> st1_tmp =  split(st1,'\t');
       vector<string> st2_tmp =  split(st2,'\t');      
 
-      //0. terminal CDSかどうか判断
       if(st1_tmp[7] !=  "2" && st1_tmp[7] !=  "3") {
             
-            //1. strandが一致しているか
             if(st1_tmp[4] == st2_tmp[4]){
                   //2. ST[k]_ed < CDS[l]_st
                   if(st1_tmp[4] == "+"){st = stoi(st1_tmp[2]);ed = stoi(st2_tmp[1]);
                   }else if(st1_tmp[4] == "-"){st = stoi(st2_tmp[2]);ed = stoi(st1_tmp[1]);}
                   else{cout << "strandが記載されていません\n";return 10;}
                   
-                  if(ed - st >= 1){//intron長でfilterをかけるならここでfilterをかける
-                        //3. ORFの読み枠が一致している
+                  if(ed - st >= 1){
                         int t=(stoi(st1_tmp[2]) - stoi(st1_tmp[1]) +1 + stoi(st1_tmp[3])) % 3;
                         if( t == stoi(st2_tmp[3])){
-                              //4. 終止コドンが発生しないか(STbase + EDbase != "TAG/TGA/TAA")
 
                               string u="";
                               if(t != 0){
@@ -248,12 +260,11 @@ int filter_fuc(string st1, string st2,unordered_map<string,string>&hash,int &st,
             }else{return 4;}
       }
       
-      // Intergenicの場合, 次に来るexonがinitial exonであればIntergenicとして繋げられる
       else if(st2_tmp[7] ==  "0" ||st2_tmp[7] ==  "3"){
             if(st1_tmp[4] == "+"){st = stoi(st1_tmp[2]);ed = stoi(st2_tmp[1]);
             }else if(st1_tmp[4] == "-"){st = stoi(st2_tmp[2]);ed = stoi(st1_tmp[1]);}
             else{cout << "strandが記載されていません\n";return 10;}
-            if(ed - st >= 20){//intergenic長
+            if(ed - st >= 20){
                   return 5;
             }
             
@@ -271,22 +282,19 @@ void longest(vector<string> &gff,ofstream &fout)
       gff_repair=gff;
 //--------------------------------------Longest Selection
       cout <<"start Longest Selection\n";      
-//一行目の処理
       
       Vec=split(gff_repair[0],'\t'); //Group
       gro=Vec[0],st=stoi(Vec[3+3]),ed=stoi(Vec[4+3]);strand=Vec[6+3];
       if(gst>st){gst=st;}if(ged<ed){ged=ed;}
       CDS.push_back(gff_repair[0]);
 
-//中間行処理
       for(int i=1;i<gff_repair.size();i++){
             Vec = split(gff_repair[i],'\t');
             //cout << gff_repair[i] <<"\n";
             if(gro == Vec[0]){
                   if(Vec[2+3] == "mRNA"){
                         grape = {CDSlen,st,ed,strand,CDS};
-                        hash.push_back(grape); //grape内には CDS,CDSlen,st,ed,stが入ってる
-                        //初期化
+                        hash.push_back(grape); 
                         CDSlen=0;CDS.clear();
                         st=stoi(Vec[3+3]),ed=stoi(Vec[4+3]);strand=Vec[6+3];
                         if(gst>st){gst=st;}if(ged<ed){ged=ed;}
@@ -298,20 +306,18 @@ void longest(vector<string> &gff,ofstream &fout)
                   }
             }else{
                   grape = {CDSlen,st,ed,strand,CDS};
-                  hash.push_back(grape); //grape内には CDS,CDSlen,st,ed,stが入ってる
+                  hash.push_back(grape); 
                   sort(hash.begin(),hash.end());
-                  //longest_outputにて、group内のlongestを出力
                   longest_output(hash,fout,gst,ged);
-                  //初期化
                   CDSlen=0;CDS.clear();hash.clear();gst=2147483647,ged=0;
                   gro=Vec[0];st=stoi(Vec[3+3]),ed=stoi(Vec[4+3]);strand=Vec[6+3];
                   if(gst>st){gst=st;}if(ged<ed){ged=ed;}      
                   CDS.push_back(gff_repair[i]);
             }
       }
-//最終行処理
+
       grape = {CDSlen,st,ed,strand,CDS};
-      hash.push_back(grape); //grape内には CDS,CDSlen,st,ed,stが入ってる
+      hash.push_back(grape); 
       sort(hash.begin(),hash.end());
       longest_output(hash,fout,gst,ged);
       cout <<"Finish Longest Selection\n";
@@ -325,12 +331,10 @@ void longest_output(vector<group> hash,ofstream &fout,int gst,int ged)
       vector<string> Vec;
       int st=0,ed=0,flag=0;
       
-//初期化
       for(int i=gst;i<=ged;i++){
             banana[i]=0;
       }
 
-//計算
       for(int i=0;i<hash.size();i++){
             flag=0;
             for(int j=1;j<hash[i].cds.size();j++){
@@ -344,7 +348,7 @@ void longest_output(vector<group> hash,ofstream &fout,int gst,int ged)
                         }
                   }
             }
-            if(flag!=1){ //かぶっていないCDSなので、出力する
+            if(flag!=1){ 
 
                   //cout << hash[i].cds[0]<<"\n";
                   Vec=split(hash[i].cds[0],'\t');
@@ -364,19 +368,16 @@ void longest_output(vector<group> hash,ofstream &fout,int gst,int ged)
 }
 vector<string> Grouping(vector<string> gffin)
 {
-//fileを行単位で読みこみ、chr・stでsortする
       group2 gfftmp;
       vector<string> I,gff_vec,gffout;
       vector<group2> Box,Box2;
       int st=0,ed=0,gro_num=1;
       string chr,tool,strand;
 
-//一行目処理
       gff_vec.push_back(gffin[0]);
       I = split(gffin[0],'\t');
       tool = I[1];st = stoi(I[3]);ed = stoi(I[4]);chr = I[0];strand = I[6];
 
-//中間処理
       for(int i=1;i<gffin.size();i++){
             I = split(gffin[i],'\t');
             if(I[2] == "mRNA")
@@ -396,7 +397,6 @@ vector<string> Grouping(vector<string> gffin)
 }
 void Grouping_output(vector<group2> &Box,int &gro_num,vector<string> &gffout)
 {
-//Groupingして、mapping_baseの数を確認する(0,1,2>=)
 
       int ele_num=0,map_num=0,tmpst=Box[0].st,tmped=Box[0].ed;
       string tmpchr=Box[0].chr;
@@ -415,7 +415,6 @@ void Grouping_output(vector<group2> &Box,int &gro_num,vector<string> &gffout)
                                     gffout.push_back(tmp);
                               }
                         }
-                        //初期化
                         gro_num++;ele_num=1;map_num=0;
                         tmpst = Box[i].st;
                         tmped = Box[i].ed;  
@@ -430,7 +429,6 @@ void Grouping_output(vector<group2> &Box,int &gro_num,vector<string> &gffout)
                               gffout.push_back(tmp);
                         }
                   }
-                  //初期化
                   gro_num++;
                   ele_num=1;
                   map_num=0;
