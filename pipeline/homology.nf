@@ -72,13 +72,14 @@ process homology {
     !{params.UTILPATH_HOMOLOGY}/fastarepair2 !{protein} relate.faa
 
     # Spaln
-    export PATH=./:\$PATH
+    #    export PATH=./:\$PATH
+    export PATH=`!{params.UTILPATH_HOMOLOGY}/getPath.pl !{params.SPALN}`:\$PATH
     !{params.MAKEIDX} -ip refer.mfa
 
     # Exon identity calculation
     !{params.SPALN} -Q7 -O4 -ospalnresult_o4 -M -yS# -T!{spalndb} -yB# -yZ -t!{params.N_THREAD} -drefer relate.faa 
     mv spalnresult_o4 !{params.OPREFIX}_spalnresult_alignment.tsv
-    
+
     # Output file 
     python !{params.UTILPATH_HOMOLOGY}/o4_to_gff.py !{params.OPREFIX}_spalnresult_alignment.tsv !{prefix} > !{prefix}_spalnresult.gff
     '''

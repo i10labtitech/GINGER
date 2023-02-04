@@ -248,6 +248,8 @@ process trinity {
     '''
     !{preprocessing}
 
+    export PATH=`!{params.UTILPATH_DENOVO}/getPath.pl !{params.SAMTOOLS}`:\$PATH
+
     # Assembling with Trinity
     mkdir !{params.OPREFIX_TRINITY}
     time !{params.TRINITY} --seqType fq --left rnaseq_1_renamed.fastq --right rnaseq_2_renamed.fastq --output !{params.OPREFIX_TRINITY} --CPU !{params.N_THREAD} --max_memory !{params.MAX_MEMORY} --full_cleanup
@@ -350,7 +352,7 @@ process homology {
     !{params.UTILPATH_HOMOLOGY}/fastarepair2 !{protein} relate.faa
 
     # Spaln
-    export PATH=./:\$PATH
+    export PATH=`!{params.UTILPATH_HOMOLOGY}/getPath.pl !{params.SPALN}`:\$PATH
     !{params.MAKEIDX} -ip refer.mfa
 
     # Exon identity calculation

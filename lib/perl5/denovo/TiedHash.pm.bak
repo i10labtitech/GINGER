@@ -21,28 +21,6 @@ use warnings;
 use DB_File;
 use Carp;
 
-=example
-
-	my $tied_hash = new TiedHash( { create => "$pfam_db.inx" } );
-
-
-    my $acc = "";
-
-    while (<$fh>) {
-	   chomp;
-       my ($token, $rest) = split (/\s+/, $_, 2);
-       if ($token eq 'NAME') {
-	      $acc = $rest;
-       }
-       elsif ($token =~ /^(NC|TC|DESC|ACC)$/) {
-	   my $key = "$acc$;$token";
-       $tied_hash->store_key_value($key, $rest);
-       print STDERR "storing: $key, $rest\n";
-   }
-
-
-=cut
-
 
 sub new {
     my $packagename = shift;
@@ -144,10 +122,10 @@ sub use_index_file {
 
     $self->{tie_invoked} = 1;
 
-    #my @keys = $self->get_keys();
-    #unless (@keys) {
-    #    confess "Error, tried using $filename db, but couldn't perform retrievals.\n";
-    #}
+    my @keys = $self->get_keys();
+    unless (@keys) {
+        confess "Error, tried using $filename db, but couldn't perform retrievals.\n";
+    }
     
     return;
 

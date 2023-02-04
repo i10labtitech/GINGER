@@ -28,10 +28,7 @@ use Carp;
 our @ISA = qw (Exporter);
 our @EXPORT = qw (translate_sequence get_protein reverse_complement);
 
-our $currentCode;
-our %codon_table;
-
-
+use vars qw ($currentCode %codon_table $init_codon_table_subref);
 
 
 =head1 NAME
@@ -105,7 +102,7 @@ my %SUPPORTED_GENETIC_CODES = ( universal => 1,
 
 =item translate_sequence()
 
-B<Description:> translates a nucleotide sequence given a specific frame 1, 2, or 3.
+B<Description:> translates a nucleotide sequence given a specific frame 1-6.
 
 B<Parameters:> $nuc_sequence, $frame
 
@@ -118,13 +115,30 @@ B<Returns:> $protein_sequence
 
 
 sub translate_sequence {
-    &_init_codon_table() unless $currentCode;
-    my ($sequence, $frame) = @_;
+  my ($sequence, $frame) = @_;
     
     $sequence = uc ($sequence);
-    $sequence =~ tr/T/U/;
+	$sequence =~ tr/U/T/;
     my $seq_length = length ($sequence);
-    unless ($frame > 0 and $frame < 4) { $frame = 1;}
+    unless ($frame >= 1 and $frame <= 6) { 
+		confess "Frame $frame is not allowed. Only between 1 and 6";
+	}
+	
+	if ($frame > 3) {
+		# on reverse strand. Revcomp the sequence and reset the frame
+		$sequence = &reverse_complement($sequence);
+		if ($frame == 4) {
+			$frame = 1;
+		}
+		elsif ($frame == 5) {
+			$frame = 2;
+		}
+		elsif ($frame == 6) {
+			$frame = 3;
+		}
+	}
+	
+    $sequence =~ tr/T/U/;
     my $start_point = $frame - 1;
     my $protein_sequence;
     for (my $i = $start_point; $i < $seq_length; $i+=3) {
@@ -237,7 +251,7 @@ sub use_specified_genetic_code {
     unless ($SUPPORTED_GENETIC_CODES{$special_code}) {
         die "Sorry, $special_code is not currently supported or recognized.\n";
     }
-    _init_codon_table(); ## Restore default universal code.  Others are variations on this.
+    &$init_codon_table_subref(); ## Restore default universal code.  Others are variations on this.
     $currentCode = $special_code;
     
     if ($special_code eq "Euplotes") {
@@ -316,8 +330,9 @@ sub get_stop_codons {
 }
 
 
-sub _init_codon_table {
-    print STDERR "initing codon table.\n" if $SEE;
+BEGIN {
+  $init_codon_table_subref = sub {
+	print STDERR "initing codon table.\n" if $SEE;
     ## Set to Universal Genetic Code
     $currentCode = "universal";
     
@@ -402,8 +417,10 @@ sub _init_codon_table {
                         GGG => 'G'    
                         
                         );
-}
+  };
 
+  &$init_codon_table_subref();
+}
 
 
 1; #end of module

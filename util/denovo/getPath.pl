@@ -1,0 +1,4 @@
+#!/usr/bin/perl
+
+$ARGV[0] =~ /^(\S+)\/samtools/;
+print "$1\n";

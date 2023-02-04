@@ -70,7 +70,7 @@ These variables must be set properly.
 [Nextflow behavior]
  * SCRATCH                : a path to scratch directory, like "/scratch"
  * N_THREAD               : Number of CPU (logical number)
- * MAX_MEMORY             : Maximam memory size for your process to use, like "100G"
+ * MAX_MEMORY             : Maximam memory size for your process to use, like "600G"
 
 [Path to tool]
  * PDIR                   : a full path to an output directory by GINGER
