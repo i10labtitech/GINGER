@@ -3,6 +3,7 @@
 ## Requirements ################################################################
 
 * GCC (confirmed with version 10.4.0) 
+* G++ (confirmed with version 4.8.5)
 * Perl (confirmed with version 5.32.1)
 * Python (confirmed with version 3.9.15)
 * Nextflow (confirmed with version 21.04.3.5560)
