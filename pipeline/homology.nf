@@ -72,7 +72,7 @@ process homology {
     !{params.UTILPATH_HOMOLOGY}/fastarepair2 !{protein} relate.faa
 
     # Spaln
-    #    export PATH=./:\$PATH
+    export PATH=./:\$PATH
     export PATH=`!{params.UTILPATH_HOMOLOGY}/getPath.pl !{params.SPALN}`:\$PATH
     !{params.MAKEIDX} -ip refer.mfa
 
