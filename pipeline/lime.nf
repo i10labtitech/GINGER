@@ -415,6 +415,7 @@ process augustus {
     '''
     export AUGUSTUS_CONFIG_PATH="!{params.AUGUSTUS_CONFIG_DIR}"
     export PATH="$PATH:!{params.AUGUSTUS_SCRIPT_DIR}"
+    export PATH="$PATH:!{params.AUGUSTUS_BIN_DIR}"
 
     script=!{params.UTILPATH_ABINITIO}
 
