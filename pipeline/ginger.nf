@@ -106,7 +106,7 @@ process to_merge {
     
     shell:
     '''
-    !{params.SEQKIT}/seqkit seq -u !{genomeFasta} > !{params.OPREFIX}_tmpgenome.fa
+    !{params.SEQKIT} seq -u !{genomeFasta} > !{params.OPREFIX}_tmpgenome.fa
     
     awk '$7 == "."' !{gtf} > !{params.OPREFIX}_single.gtf
     
@@ -114,7 +114,7 @@ process to_merge {
     
     !{params.UTILPATH_MAPPING}/ORF_finder !{params.OPREFIX}_single.fa !{params.OPREFIX}_single_orf !{params.MIN0} false
     
-    !{params.SEQKIT}/seqkit fx2tab -nl !{params.OPREFIX}_single_orf.cds | awk '{print $1"\t"$2"\t"$5}' > !{params.OPREFIX}_single_orf.list
+    !{params.SEQKIT} fx2tab -nl !{params.OPREFIX}_single_orf.cds | awk '{print $1"\t"$2"\t"$5}' > !{params.OPREFIX}_single_orf.list
     
     !{params.UTILPATH_MAPPING}/longest_transcript !{params.OPREFIX}_single_orf.list > !{params.OPREFIX}_single_orf_longest.list
     
@@ -150,7 +150,7 @@ process to_learn_1st {
 
     shell:
     '''
-    !{params.UTILPATH_MAPPING}/seqkit seq -u !{genomeFasta} > !{params.OPREFIX}_tmpgenome.fa
+    !{params.SEQKIT} seq -u !{genomeFasta} > !{params.OPREFIX}_tmpgenome.fa
     
     !{params.UTILPATH_MAPPING}/exon_num_filter !{gtf} !{params.OPREFIX}_multi.gtf 2 10000
     
@@ -160,7 +160,7 @@ process to_learn_1st {
     
     !{params.UTILPATH_MAPPING}/ORF_finder !{params.OPREFIX}_multi.fa !{params.OPREFIX}_multi_orf !{params.MIN1} true
     
-    !{params.UTILPATH_MAPPING}/seqkit fx2tab -nl !{params.OPREFIX}_multi_orf.cds | awk '{print $1"\t"$2"\t"$5}' > !{params.OPREFIX}_multi_orf.list
+    !{params.SEQKIT} fx2tab -nl !{params.OPREFIX}_multi_orf.cds | awk '{print $1"\t"$2"\t"$5}' > !{params.OPREFIX}_multi_orf.list
     
     !{params.UTILPATH_MAPPING}/longest_transcript !{params.OPREFIX}_multi_orf.list > !{params.OPREFIX}_multi_orf_longest.list
     
