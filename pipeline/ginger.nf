@@ -345,13 +345,14 @@ process homology {
 
     shell:
     '''
-    cp !{params.UTILPATH_HOMOLOGY}/makblk.pl . # used in makeidx.pl
+    cp !{params.MAKBLK} . # used in makeidx.pl
 
     # Preprocessing
     !{params.UTILPATH_HOMOLOGY}/fastarepair !{genomeFasta} refer.mfa
     !{params.UTILPATH_HOMOLOGY}/fastarepair2 !{protein} relate.faa
 
     # Spaln
+    export PATH=./:\$PATH
     export PATH=`!{params.UTILPATH_HOMOLOGY}/getPath.pl !{params.SPALN}`:\$PATH
     !{params.MAKEIDX} -ip refer.mfa
 
