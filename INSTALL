@@ -31,6 +31,7 @@
 * Exporter (Perl module; confirmed with version 5.74)
 * DBI (Perl module; confirmed with version 1.643)
 * Parallel::ForkManager (Perl module; confirmed with version 2.0.2)
+* Matplotlib (Python library; confirmed with version 3.6.2)
 * Awk (confirmed with version 4.0.2)
 * sed (confirmed with version 4.2.2)
 
