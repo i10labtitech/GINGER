@@ -106,7 +106,7 @@ process to_merge {
     
     shell:
     '''
-    !{params.UTILPATH_MAPPING}/seqkit seq -u !{genomeFasta} > !{params.OPREFIX}_tmpgenome.fa
+    !{params.SEQKIT}/seqkit seq -u !{genomeFasta} > !{params.OPREFIX}_tmpgenome.fa
     
     awk '$7 == "."' !{gtf} > !{params.OPREFIX}_single.gtf
     
@@ -114,7 +114,7 @@ process to_merge {
     
     !{params.UTILPATH_MAPPING}/ORF_finder !{params.OPREFIX}_single.fa !{params.OPREFIX}_single_orf !{params.MIN0} false
     
-    !{params.UTILPATH_MAPPING}/seqkit fx2tab -nl !{params.OPREFIX}_single_orf.cds | awk '{print $1"\t"$2"\t"$5}' > !{params.OPREFIX}_single_orf.list
+    !{params.SEQKIT}/seqkit fx2tab -nl !{params.OPREFIX}_single_orf.cds | awk '{print $1"\t"$2"\t"$5}' > !{params.OPREFIX}_single_orf.list
     
     !{params.UTILPATH_MAPPING}/longest_transcript !{params.OPREFIX}_single_orf.list > !{params.OPREFIX}_single_orf_longest.list
     
