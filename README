@@ -49,7 +49,7 @@ phase2.sh requires an argument specifying minimum CDS length. 50 is an example.
 '''sh
 nextflow -C nextflow.config run /path/to/pipeline/ginger.nf
 /path/to/pipeline/phase0.sh
-/path/to/pipeline/phase1.sh
+/path/to/pipeline/phase1.sh > phase1.log
 /path/to/pipeline/phase2.sh 50
 /path/to/pipeline/summary.sh
 '''
@@ -67,7 +67,7 @@ nextflow -C nextflow.config run /path/to/pipeline/denovo.nf
 nextflow -C nextflow.config run /path/to/pipeline/abinitio.nf
 nextflow -C nextflow.config run /path/to/pipeline/homology.nf
 /path/to/pipeline/phase0.sh
-/path/to/pipeline/phase1.sh
+/path/to/pipeline/phase1.sh > phase1.log
 /path/to/pipeline/phase2.sh 50
 /path/to/pipeline/summary.sh
 '''
