@@ -20,7 +20,7 @@ with GINGER; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-if (file(params.PDIR_PREP_MAPPING).isDirectory()) {
+if (file(params.PDIR_PREP).isDirectory()) {
     error "The publish directory already exists: \"${params.PDIR_PREP_MAPPING}\""
 } else {
     print "No publish directory : \"${params.PDIR_PREP_MAPPING}\""
@@ -497,10 +497,10 @@ process augustus {
     cat abinitio*_shaped.gff > abinitio_shaped_cat.gff
     python ${script}/re_name_for_AugustusGFF.py abinitio_shaped_cat.gff > Augustus_abinitio_tmp.gtf
 
-    #in-frame stopcodon geneを取り除く
+    #
     ${script}/inframe_stopcodon_exclude -i Augustus_abinitio_tmp.gtf -g ${CWD0}/!{genomeFASTA} -d1 gene -d2 CDS -o Augustus_abinitio.gtf
 
-    #
+    # Finish
     cp Augustus_abinitio.gtf ../../Augustus_abinitio.gtf
     cp second.gb.train.train ../../second.gb.train.train
     '''
@@ -530,10 +530,7 @@ process SNAP {
     '''
     export PATH="!{params.SNAP_DIR}:$PATH"
 
-    ####事前環境設定####
     script=!{params.UTILPATH_ABINITIO}
-
-    ####
 
     CWD0=`pwd`
 
@@ -571,15 +568,15 @@ process SNAP {
 	done < ./genome.txt
 
     cd ../
-    
+
     mkdir snap_prediction
-    
+
     cat make_data_set/*.ann > snap_prediction/genome.ann
     cat make_data_set/*.dna > snap_prediction/genome.dna
     wait
 
     cd snap_prediction/
-        
+
     !{params.FATHOM} genome.ann genome.dna -gene-stats > gene-stats.log 2>&1
     !{params.FATHOM} genome.ann genome.dna -validate > validate.log 2>&1
     !{params.FATHOM} genome.ann genome.dna -categorize 1000 > categorize.log 2>&1

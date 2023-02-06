@@ -40,9 +40,10 @@ if (file(params.INPUT_REPOUT).isFile())           {} else { error "No path : \"$
 //if (file(params.INPUT_TOLEARN1ST).isFile())       {} else { error "No path : \"${params.TOLEARN1ST}\"" }
 if (file("${params.AUGUSTUS_SPEC_DIR}/${params.AUGUSTUS_SPEC}").isDirectory()) {error "\"${params.AUGUSTUS_SPEC}\" is in ${params.AUGUSTUS_SPEC_DIR}!"} 
 
-SCRATCH = params.SCRATCH
 size = params.AUGUSTUS_TRAINING_SIZE
 dict = 'Abinitio_predict'
+
+SCRATCH = params.SCRATCH
 
 // --- Augustus ---
 process augustus {
@@ -78,12 +79,12 @@ process augustus {
 
     mkdir -p Augustus_prediction
     cd Augustus_prediction
-    
+
     mkdir !{dict}
     cd !{dict}
-    
+
     CWD1=`pwd`
-    
+
     python ${script}/gff2gtf_better.py ${CWD0}/!{trainingData} > ./input.gtf
     awk '$3=="CDS"' ./input.gtf > ./input2.gtf
     perl !{params.AUGUSTUS_SCRIPT_DIR}/gff2gbSmallDNA.pl input2.gtf ${CWD0}/${genome} 1000 first.gb
@@ -111,10 +112,10 @@ process augustus {
     # Optimization
     perl !{params.AUGUSTUS_SCRIPT_DIR}/optimize_augustus.pl --species=!{params.AUGUSTUS_SPEC} second.gb.train.train --cpus=!{params.N_THREAD} --kfold=!{params.N_THREAD}
 	
-    # training 2
+    # Training 2
     !{params.ETRAINING} --species=!{params.AUGUSTUS_SPEC} second.gb.train.train
     
-    # test 2
+    # Test 2
     !{params.AUGUSTUS} --species=!{params.AUGUSTUS_SPEC} second.gb.test | tee second.out
     grep -A 22 Evaluation second.out > test_result2.txt &
 	    
@@ -219,15 +220,15 @@ process SNAP {
 	done < ./genome.txt
 
     cd ../
-    
+
     mkdir snap_prediction
-    
+
     cat make_data_set/*.ann > snap_prediction/genome.ann
     cat make_data_set/*.dna > snap_prediction/genome.dna
     wait
-    
+
     cd snap_prediction/
-        
+
     !{params.FATHOM} genome.ann genome.dna -gene-stats > gene-stats.log 2>&1
     !{params.FATHOM} genome.ann genome.dna -validate > validate.log 2>&1
     !{params.FATHOM} genome.ann genome.dna -categorize 1000 > categorize.log 2>&1
