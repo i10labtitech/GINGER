@@ -29,7 +29,9 @@ my $firstMinScore = undef;
     
 while (<>) {
     if (/^(\S+)/) {
-        my $aVal = log($1) / log(10.0);
+        my $raw = $1;
+        next if ($raw == 0.0);
+        my $aVal = log($raw) / log(10.0);
         push(@val, $aVal);
         if (defined($min)) {
             $min = $aVal if ($aVal < $min);
@@ -59,7 +61,6 @@ for (my $i = 0; $i <= $#hist; $i++) {
         $s += $hist[$j];
     }
     $histSmooth[$i] = $s / $n;
-#    print "$i\t$histSomooth[$i]\n";
 }
 
 my $prevHistVal = undef;
@@ -69,37 +70,21 @@ for (my $i = $#hist; 0 <= $i; $i--) {
         my $sign = undef;
         if ($histMax / 100.0 < $histSmooth[$i]) {
             if ($prevHistVal - $histSmooth[$i] < 0) {
-#                print "-";
                 $sign = -1;
             } else {
-#                print "+";
                 $sign = 1;
             }
-#            print "\n";
         }
         if (defined($sign)) {
             if (defined($prevSign)) {
                 if (($prevSign == 1) && ($sign == -1)) {
                     my $aScore = 10.0 ** (($i + 1) * $step + $step / 2.0 + $min);
-#                    print "*\t";
-#                    printf("%0.4f", 10.0 ** (($i + 1) * $step + $min));
-#                    print "\t";
-#                    printf("%0.4f", $aScore);
-#                    print "\n";
                     $firstMinScore = $aScore unless (defined($firstMinScore));
                 }
             }
             $prevSign = $sign;
         }
     }
-#    printf("%0.4f", $i * $step + $min);
-#    print "\t";
-#    printf("%0.4f", 10.0 ** ($i * $step + $min));
-#    print "\t";
-#    print $hist[$i];
-#    print "\t";
-#    print $histSmooth[$i];
-#    print "\n";
     $prevHistVal = $histSmooth[$i];
 }
 
