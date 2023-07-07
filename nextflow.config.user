@@ -1,0 +1,111 @@
+params {
+
+    /****************************************
+     Input
+     ****************************************/
+
+    INPUT_GENOME       = "[The path to the directory that contains 'sample_data_cel/']/sample_data_cel/GCF_000002985.6_WBcel235_genomic.commentModified.fna"
+    INPUT_MASKEDGENOME = "[The path to the directory that contains 'sample_data_cel/']/sample_data_cel/GCF_000002985.6_WBcel235_genomic.commentModified.masked.fna"
+    INPUT_REPOUT       = "[The path to the directory that contains 'sample_data_cel/']/sample_data_cel/GCF_000002985.6_WBcel235_genomic.out"
+    INPUT_RNASEQR1     = "[The path to the directory that contains 'sample_data_cel/']/sample_data_cel/SRR5849934_1.fastq"
+    INPUT_RNASEQR2     = "[The path to the directory that contains 'sample_data_cel/']/sample_data_cel/SRR5849934_2.fastq"
+//    RNASEQ_OTHER1      = "/full/path/to?additional RNA-Seq-based method GFF"
+//    RNASEQ_OTHER2      = "/full/path/to?additional RNA-Seq-based method GFF"
+//    HOMOLOGY_OTHER1    = "/full/path/to?additional homology-based method GFF"
+//    HOMOLOGY_OTHER2    = "/full/path/to?additional homology-based method GFF"
+//    ABINITIO_OTHER1    = "/full/path/to?additional ab initio-based method GFF"
+//    ABINITIO_OTHER2    = "/full/path/to?additional ab initio-based method GFF"
+    
+    HOMOLOGY_DATA = [
+        "PREFIX"  : ["Cbriggsae",   // No.1
+                     "Ppacificus"], // No.2
+        "PROTEIN" : ["[The path to the directory that contains 'sample_data_cel/']/sample_data_cel/GCF_000004555.2_CB4_translated_cds.faa", // No.1
+                     "[The path to the directory that contains 'sample_data_cel/']/sample_data_cel/GCA_000180635.4_El_Paco_v._4_translated_cds.faa"], // No.2
+        "SPALNDB" : ["NematodC", // No.1
+                     "NematodC"] // No.2
+    ]
+
+    AUGUSTUS_SPEC          = "test" // [Augustus]/config/species must not have files with the same name
+
+    /****************************************
+     Output
+     ****************************************/
+
+    // --- Directory to publish results ---
+
+    PDIR      = "[The path to the output directory (e.g. '/XXX/XXX/output_cel/']"
+
+    /****************************************
+     General
+     ****************************************/
+    
+    // --- Scratch dirs ---
+    SCRATCH     = "/scratch"
+    
+    // --- ---
+//    N_THREAD    = 24
+    N_THREAD    = 20
+    
+    // --- ---
+    MAX_MEMORY  = "250G"
+
+    /****************************************
+     RNA-Seq mapping based
+     ****************************************/
+
+    // --- Tools for to_merge ---
+    MIN0        = 90 // MINはtranscriptの最小base長
+
+    MIN1        = 300 // MINはtranscriptの最小base長
+    
+    /****************************************
+     RNA-Seq denovo based
+     ****************************************/
+
+    // --- Tools for trinity ---
+    SRA_FLAG        = 1
+
+    /****************************************
+     Ab initio based
+     ****************************************/
+
+    AUGUSTUS_TRAINING_SIZE = 1000 // `echo 1000`
+    SNAP_TRAINING_SIZE  = AUGUSTUS_TRAINING_SIZE
+    AUGUSTUS_TRAINING_DATA = "${PDIR}/Prep/mapping/to_learn_2nd/ginger_learn_2nd.gff3" // gff
+    SNAP_TRAINING_DATA  = "${PDIR}/Prep/mapping/to_learn_2nd/ginger_learn_2nd.gff3" // gff_p
+
+    /****************************************
+     Merge phase; step1
+     ****************************************/
+    MAPPING_WEIGHT  = 1.6
+    DENOVO_WEIGHT   = 1.4
+    HOMOLOGY_WEIGHT = 2.0
+    AUGUSTUS_WEIGHT = 1.8
+    SNAP_WEIGHT     = 1.2
+
+    /********************************************************************************
+     ********************************************************************************
+     ***** Do not edit following settings *******************************************
+     ********************************************************************************
+     ********************************************************************************/
+
+    OPREFIX   = "ginger"
+    PDIR_PREP = "${PDIR}/Prep"
+    PDIR_PREP_MAPPING = "${PDIR}/Prep/mapping"
+    PDIR_PREP_MAPPING_MAPPING = "${PDIR}/Prep/mapping/mapping"
+    PDIR_PREP_MAPPING_MERGE = "${PDIR}/Prep/mapping/merge"
+    PDIR_PREP_MAPPING_TOLEARN1ST = "${PDIR}/Prep/mapping/to_learn_1st"
+    PDIR_PREP_MAPPING_TOLEARN2ND = "${PDIR}/Prep/mapping/to_learn_2nd"
+    PDIR_PREP_DENOVO = "${PDIR}/Prep/denovo"
+    PDIR_PREP_DENOVO_TRINITY = "${PDIR}/Prep/denovo/trinity"
+    PDIR_PREP_DENOVO_OASES = "${PDIR}/Prep/denovo/oases"
+    PDIR_PREP_HOMOLOGY = "${PDIR}/Prep/homology"
+    PDIR_PREP_HOMOLOGY_HOMOLOGY = "${PDIR}/Prep/homology/homology"
+    PDIR_PREP_HOMOLOGY_HOMOLOGYMERGE = "${PDIR}/Prep/homology/homology_merge"
+    PDIR_PREP_HOMOLOGY_HOMOLOGYFILTER = "${PDIR}/Prep/homology/homology_filter"
+    PDIR_PREP_ABINITIO = "${PDIR}/Prep/abinitio"
+    PDIR_PREP_ABINITIO_AUGUSTUS = "${PDIR}/Prep/abinitio/augustus"
+    PDIR_PREP_ABINITIO_SNAP = "${PDIR}/Prep/abinitio/snap"
+    AUGUSTUS_WORK_DIR = "${PDIR}/Prep/augustus_config"
+
+}
