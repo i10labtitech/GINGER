@@ -1,7 +1,0 @@
-/data2/tany/dev4git/GINGER_v1.0.0/util/merge_phase0
-genConfigIniForMerge.pl
-addAdditionalGff.pl
-weighten.pl
-
-/data2/tany/dev4git/GINGER_v1.0.0/src/merge_phase1
-new_subgroup.cpp new_subgroup.cpp.new.cpp new_subgroup_new
