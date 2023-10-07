@@ -48,6 +48,8 @@ ebox = []
 
 for f in gff:
 	f = f.strip()
+	if len(f) < 1:
+                continue
 	if f[0] != "#":
 		ff = f.split("\t")
 		kata = ff[2]
