@@ -46,8 +46,11 @@ See "Settings" section in INSTALL
 The command to kick the docker image with the prepared Perl script is as follows.
 (Docker image: i10labtitech/tools:GINGER_v1.0.1)
 
+'''sh
 generateSampleData_cel [Directory name for sample input data (e.g. sample_data_cel)]
 runGINGER.pl nextflow.config.user
+'''
+
 * Edit the [The path to the directory that contains 'sample_data_cel/'] part of 
   the variable named INPUT_GENOME, INPUT_GENOME, INPUT_MASKEDGENOME, INPUT_REPOUT.
   INPUT_RNASEQR1, INPUT_RNASEQR2, PROTEIN
@@ -61,8 +64,10 @@ runGINGER.pl nextflow.config.user
   when you want to use your annotation data to predict gene structures in GINGER.
   # is the number of annotation data.
 
+'''sh
 cd /XXX/XXX/output_cel/
 runEvaluatePred.pl /XXX/XXX/sample_data_cel/GCF_000002985.6_WBcel235_genomic.gff ./ginger_phase2.gff RNA CDS RNA CDS
+'''
 
 ### Commands B (using installed GINGER) ##########################################
 
@@ -70,6 +75,15 @@ The command to run GINGER after installing it is as follows.
 Put nextflow.config into your working directory.
 If you want to run the preparation phase all at once, type like following.
 phase2.sh requires an argument specifying minimum CDS length. 50 is an example.
+
+If you have installed the conda package using "conda" or "mamba" command,
+you can obatain the automatically configured nextflow.config file for tool paths
+in the current directory using the "gingerInitCfg" command.
+
+'''sh(If you have installed the conda package using "conda" or "mamba" command)
+mamba install -c i10labtitech ginger
+gingerInitCfg
+'''
 
 '''sh
 nextflow -C nextflow.config run /path/to/pipeline/ginger.nf
