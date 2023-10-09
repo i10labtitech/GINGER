@@ -45,7 +45,6 @@ params {
     SCRATCH     = "/scratch"
     
     // --- ---
-//    N_THREAD    = 24
     N_THREAD    = 20
     
     // --- ---
