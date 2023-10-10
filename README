@@ -48,6 +48,7 @@ The command to kick the docker image with the prepared Perl script is as follows
 
 '''sh
 generateSampleData_cel [Directory name for sample input data (e.g. sample_data_cel)]
+# Copy and edit nextflow.config
 runGINGER.pl nextflow.config.user
 '''
 
@@ -83,6 +84,10 @@ in the current directory using the "gingerInitCfg" command.
 '''sh(If you have installed the conda package using "conda" or "mamba" command)
 mamba install -c i10labtitech ginger
 gingerInitCfg
+# Then, a nextflow.config file will be generated in the current directory.
+# Edit the paths of input files, the output directory, the scratch directory path,
+# the number of threads used, and the maximum memory capacity, among other settings,
+# in the nextflow.config file.
 '''
 
 '''sh
