@@ -60,7 +60,7 @@ runGINGER.pl nextflow.config.user
 * Edit the variables named `RNASEQ_OTHER#, HOMOLOGY_OTHER#, ABINITIO_OTHER#, (paths)`
   `RNASEQ_OTHER#_WEIGHT,  HOMOLOGY_OTHER#_WEIGHT, ABINITIO_OTHER#_WEIGHT, (weights)`
   when you want to use your annotation data to predict gene structures in GINGER.
-  # is the number of annotation data.
+* Note that `#` is the number of annotation data.
 
 ```
 cd /XXX/XXX/output_cel/
