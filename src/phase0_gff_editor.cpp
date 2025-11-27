@@ -30,7 +30,7 @@ with GINGER; if not, write to the Free Software Foundation, Inc.,
 #include <algorithm>
 #include <iomanip>
 #include <time.h>
-#include "function.hpp"
+#include "phase0_function.hpp"
 using namespace std;
 
 void repair(ifstream &ifs);

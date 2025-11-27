@@ -41,7 +41,7 @@ clean_mapping:
 $(DEST)/gff_trimmer $(DEST)/exon_num_filter \
 $(DEST)/longest_transcript $(DEST)/repeat_checker \
 $(DEST)/strand_replace $(DEST)/set_difference $(DEST)/tag_trimmer \
-$(DEST)/ORF_finder $(DEST)/ORF_finder 
+$(DEST)/ORF_finder
 
 
 homology: fastarepair fastarepair2 gff_2_proteinfasta flameshiftfilter
@@ -85,19 +85,19 @@ clean_abinitio:
 merge_phase0: phase0_gff_editor Row2_rename RNA-seq_reform Spaln_reform \
 Augustus_reform
 
-phase0_gff_editor: ${SRC}/190521_gff_editor.cpp ${SRC}/phase0_function.hpp
-	${GXX} ${SRC}/190521_gff_editor.cpp -o ${DEST}/phase0_gff_editor -std=c++0x -O3
+phase0_gff_editor: ${SRC}/phase0_gff_editor.cpp ${SRC}/phase0_function.hpp
+	${GXX} ${SRC}/phase0_gff_editor.cpp -o ${DEST}/phase0_gff_editor -std=c++0x -O3
 
-Row2_rename: ${SRC}/row2_rename.cpp ${SRC}/phase0_function.hpp
+Row2_rename: ${SRC}/row2_rename.cpp
 	${GXX} ${SRC}/row2_rename.cpp -o ${DEST}/Row2_rename -std=c++0x -O3
 
-RNA-seq_reform: ${SRC}/rnaseq_reform.cpp ${SRC}/phase0_function.hpp
+RNA-seq_reform: ${SRC}/rnaseq_reform.cpp
 	${GXX} ${SRC}/rnaseq_reform.cpp -o ${DEST}/RNA-seq_reform -std=c++0x -O3
 
-Spaln_reform: ${SRC}/spaln_reform.cpp ${SRC}/phase0_function.hpp
-	${GXX} ${SRC}/spaln_reform.cpp -o ${DEAT}/Spaln_reform -std=c++0x -O3
+Spaln_reform: ${SRC}/spaln_reform.cpp
+	${GXX} ${SRC}/spaln_reform.cpp -o ${DEST}/Spaln_reform -std=c++0x -O3
 
-Augustus_reform: ${SRC}/augustus_reform.cpp ${SRC}/phase0_function.hpp
+Augustus_reform: ${SRC}/augustus_reform.cpp
 	${GXX} ${SRC}/augustus_reform.cpp -o ${DEST}/Augustus_reform -std=c++0x -O3
 
 clean_merge_phase0:
@@ -118,14 +118,14 @@ subgroup: ${SRC}/subgroup_v2.2.cpp
 new_subgroup: ${SRC}/new_subgroup.cpp
 	${GXX} ${SRC}/new_subgroup.cpp -o ${DEST}/new_subgroup -std=c++0x -O3
 
-Searchalgo: ${SRC}/searchalgo.cpp
+Searchalgo: ${SRC}/searchalgo.cpp ${SRC}/scoring.hpp ${SRC}/phase1_function.hpp
 	${GXX} ${SRC}/searchalgo.cpp -o ${DEST}/Searchalgo -std=c++0x -O3
 
 phase1_gff_editor: ${SRC}/phase1_gff_editor.cpp ${SRC}/phase1_function.hpp
 	${GXX} ${SRC}/phase1_gff_editor.cpp -o ${DEST}/phase1_gff_editor -std=c++0x -O3
 
 initial_exon_polish: ${SRC}/initial_exon_polish.cpp
-	${GXX} ${SRC}/initial_exon_polish.cpp -o ${SRC}/initial_exon_polish -std=c++0x -O3
+	${GXX} ${SRC}/initial_exon_polish.cpp -o ${DEST}/initial_exon_polish -std=c++0x -O3
 
 clean_merge_phase1:
 	rm -f \
