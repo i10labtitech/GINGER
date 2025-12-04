@@ -1,0 +1,63 @@
+context:
+  version: 1.0.1
+
+package:
+  name: ginger
+  version: '{{ version }}'
+
+source:
+  path: /home/tany/GINGER/GINGER_v1.0.1_fromGithub
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - gxx
+  run:
+    - perl
+    - python
+    - nextflow <=21.04.0
+    - transdecoder
+    - matplotlib
+    - sra-tools
+# *** mapping.sh ***
+    - hisat2
+    - samtools
+    - stringtie
+    - perl-carp
+    - perl-pathtools
+    - perl-data-dumper
+    - perl-db_file
+    - perl-findbin
+    - perl-storable
+# threads, threads::shared      
+    - perl-uri
+# *** denovo.sh ***
+    - velvet
+    - oases
+    - trinity =2.9.1
+    - gmap
+    - gffread # !!!!!
+    - cd-hit
+    - seqkit
+    - perl-exporter
+    - gffutils
+    - jellyfish
+    - salmon
+# *** homology.sh ***
+    - spaln
+    - sed
+    - gcc
+# *** abinitio ***
+    - augustus =3.3.2
+    - snap
+    - perl-dbi
+    - perl-parallel-forkmanager
+
+about:
+  home: https://github.com/i10labtitech/GINGER
+  license: GPLv3
+  summary: Gradual INtegrated GEne Reconstruction (GINGER)
+  description: GINGER is a tool that is implemented an integrated method for gene structure prediction in higher eukaryotes. RNA-Seq-based methods, ab initio-based methods, homology-based methods are performed, and then gene structures are reconstructed via dynamic programming with appropriately weighted and scored exon/intron/intergenic regions. Different prediction processes and filtering criteria are applied to multi-exon and single-exon genes. This pipeline is implemented using Nextflow.
+
