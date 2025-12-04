@@ -15,9 +15,9 @@ build:
   script:
     - git rev-parse HEAD > VERSION
     - make
-    - mkdir -p $PREFIX/bin/ginger-util
-    - mv VERSION util/* $PREFIX/bin/ginger-util/
-    - mv pipeline/* $PREFIX/bin/
+    - mv VERSION bin/ginger-util/
+    - mkdir -p $PREFIX/bin
+    - mv bin/* $PREFIX/bin/
 
 requirements:
   build:

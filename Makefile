@@ -1,5 +1,5 @@
 SRC=src
-DEST=util
+DEST=bin/ginger-util
 GXX=g++
 
 all: mapping denovo homology abinitio merge_phase0 merge_phase1 merge_phase2 summary evaluation
