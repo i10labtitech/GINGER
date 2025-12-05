@@ -28,7 +28,7 @@ function rm_tmpfile {
 }
 
 GINGER_PATH=`dirname $(readlink -f $0)`
-SCRIPT=${GINGER_PATH}/../util/merge_phase0
+SCRIPT=${GINGER_PATH}/ginger-util
 CDIR=`pwd`
 
 PREFIX="ginger"
@@ -46,7 +46,7 @@ python ${SCRIPT}/scoring_mapping.py ${TMPFILE}.merge_cov ${TMPFILE}.cov_stats > 
 ${SCRIPT}/RNA-seq_reform ${TMPFILE}.mapping ${TMPFILE}.mapping.reform
 ${SCRIPT}/Row2_rename ${TMPFILE}.mapping.reform ${TMPFILE}.mapping.rename mappingbase
 awk '$3 == "mRNA" || $3 == "CDS"' ${TMPFILE}.mapping.rename > ${TMPFILE}.mapping.correction
-${SCRIPT}/gff_editor -f ${TMPFILE}.mapping.correction -CDSfix > /dev/null
+${SCRIPT}/phase0_gff_editor -f ${TMPFILE}.mapping.correction -CDSfix > /dev/null
 mv Gene_region_repair.gff ${PREFIX}_mappingbase.gff
 
 #denovo
@@ -57,7 +57,7 @@ python ${SCRIPT}/scoring_denovo.py ${TMPFILE}.merge_id > ${TMPFILE}.denovo
 ${SCRIPT}/RNA-seq_reform ${TMPFILE}.denovo ${TMPFILE}.denovo.reform
 ${SCRIPT}/Row2_rename ${TMPFILE}.denovo.reform ${TMPFILE}.denovo.rename denovobase
 awk '$3 == "mRNA" || $3 == "CDS"' ${TMPFILE}.denovo.rename > ${TMPFILE}.denovo.correction
-${SCRIPT}/gff_editor -f ${TMPFILE}.denovo.correction -CDSfix > /dev/null
+${SCRIPT}/phase0_gff_editor -f ${TMPFILE}.denovo.correction -CDSfix > /dev/null
 mv Gene_region_repair.gff ${PREFIX}_denovobase.gff
 
 #homology
@@ -66,7 +66,7 @@ python ${SCRIPT}/scoring_homology.py $HOMOLOGY_RESULT > ${TMPFILE}.homology
 ${SCRIPT}/Spaln_reform ${TMPFILE}.homology ${TMPFILE}.homology.reform
 ${SCRIPT}/Row2_rename ${TMPFILE}.homology.reform ${TMPFILE}.homology.rename homology
 awk '$3 == "mRNA" || $3 == "CDS"' ${TMPFILE}.homology.rename > ${TMPFILE}.homology.correction
-${SCRIPT}/gff_editor -f ${TMPFILE}.homology.correction -CDSfix > /dev/null
+${SCRIPT}/phase0_gff_editor -f ${TMPFILE}.homology.correction -CDSfix > /dev/null
 mv Gene_region_repair.gff ${PREFIX}_homology.gff
 
 #Augustus
@@ -74,7 +74,7 @@ echo "Ab initio based; Augustus"
 ${SCRIPT}/Augustus_reform $AUGUSTUS_RESULT ${TMPFILE}.augustus.reform
 ${SCRIPT}/Row2_rename ${TMPFILE}.augustus.reform ${TMPFILE}.augustus.rename AUGUSTUS
 awk '$3 == "mRNA" || $3 == "CDS"' ${TMPFILE}.augustus.rename > ${TMPFILE}.augustus.correction
-${SCRIPT}/gff_editor -f ${TMPFILE}.augustus.correction -CDSfix > /dev/null
+${SCRIPT}/phase0_gff_editor -f ${TMPFILE}.augustus.correction -CDSfix > /dev/null
 python ${SCRIPT}/scoring_augustus.py Gene_region_repair.gff > ${PREFIX}_augustus.gff
 rm Gene_region_repair.gff
 
@@ -84,7 +84,7 @@ python ${SCRIPT}/score_separator_v2.py $SNAP_RESULT > ${TMPFILE}.sep
 python ${SCRIPT}/scoring_snap.py ${TMPFILE}.sep > ${TMPFILE}.snap
 ${SCRIPT}/Row2_rename ${TMPFILE}.snap ${TMPFILE}.snap.rename SNAP
 awk '$3 == "mRNA" || $3 == "CDS"' ${TMPFILE}.snap.rename > ${TMPFILE}.snap.correction
-${SCRIPT}/gff_editor -f ${TMPFILE}.snap.correction -CDSfix > /dev/null
+${SCRIPT}/phase0_gff_editor -f ${TMPFILE}.snap.correction -CDSfix > /dev/null
 mv Gene_region_repair.gff ${PREFIX}_snap.gff
 
 #merge

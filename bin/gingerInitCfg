@@ -2,20 +2,10 @@
 
 use FindBin;
 
-my $scriptDir = $FindBin::Bin;
-chomp($scriptDir);
-$scriptDir  = `readlink -f $scriptDir/gingerInitCfg`;
-$scriptDir =~ s/\/gingerInitCfg\s*$//;
-chomp($scriptDir);
-my $binRootDir = $scriptDir;
-$binRootDir    =~ s/\/util$//;
-my $envRootDir = $scriptDir;
-$envRootDir    =~ s/\/bin\/ginger[\d\-\.]+\/util$//;
-my $nextflowCfgTmplate = "$binRootDir/pipeline/nextflow.config";
-opendir(DIR, $binRootDir) or die "can not open a directory \"$binRootDir\".";
-my @rootDir = grep(/^ginger/, readdir(DIR));
-closedir(DIR);
-my $pkgRootDir = $rootDir[0];
+my $binRootDir = $FindBin::Bin;
+$binRootDir    =~ s/\/bin$//;
+my $envRootDir = $ENV{CONDA_PREFIX};
+my $nextflowCfgTmplate = "$binRootDir/bin/ginger-util/nextflow.config.template";
 
 my$newCfg = "";
 
@@ -72,7 +62,7 @@ while (<IN>) {
 }
 close(IN);
 
-open(OUT, ">./nextflow.config") or die "can not open a file \"> ./nextflow.config\".";
+open(OUT, ">./nextflow.config.template") or die "can not open a file \"> ./nextflow.config.template\".";
 print OUT $newCfg;
 close(OUT);
 

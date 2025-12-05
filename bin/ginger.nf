@@ -262,7 +262,7 @@ process trinity {
     '''
     !{preprocessing}
 
-    export PATH=`!{params.UTILPATH_DENOVO}/getPath.pl !{params.SAMTOOLS}`:\$PATH
+    export PATH=`!{params.UTILPATH_DENOVO}/denovo_getPath.pl !{params.SAMTOOLS}`:\$PATH
 
     # Assembling with Trinity
     mkdir !{params.OPREFIX_TRINITY}
@@ -372,7 +372,7 @@ process homology {
 
     # Spaln
     export PATH=./:\$PATH
-    export PATH=`!{params.UTILPATH_HOMOLOGY}/getPath.pl !{params.SPALN}`:\$PATH
+    export PATH=`!{params.UTILPATH_HOMOLOGY}/homology_getPath.pl !{params.SPALN}`:\$PATH
     !{params.MAKEIDX} -ip refer.mfa
 
     # Exon identity calculation

@@ -22,18 +22,18 @@ NEXTFLOWCONFIG=$1
 THRESHOLD=$2
 
 GINGER_PATH=`dirname $(readlink -f $0)`
-SCRIPT=${GINGER_PATH}/../util/merge_phase1
+SCRIPT=${GINGER_PATH}/ginger-util
 
 Gtool=${SCRIPT}/Grouping
 GSub=${SCRIPT}/subgroup
 NSub=${SCRIPT}/new_subgroup
 Tool=${SCRIPT}/Searchalgo
-Edit=${SCRIPT}/gff_editor
+Edit=${SCRIPT}/phase1_gff_editor
 Polish=${SCRIPT}/initial_exon_polish
 filter=${SCRIPT}/score_filtering.py
-info=${SCRIPT}/info_annotate.py
-ext_score=${SCRIPT}/extract_score.py
-cutoff=${SCRIPT}/cutoff.pl
+#info=${SCRIPT}/info_annotate.py
+#ext_score=${SCRIPT}/extract_score.py
+#cutoff=${SCRIPT}/cutoff.pl
 sum=${SCRIPT}/sum_of_weight.pl
 intronLen=${SCRIPT}/intron_length.py
 intronDist=${SCRIPT}/intron_distribution.py
@@ -45,11 +45,11 @@ if test $# -ne 2 ; then
     echo "2: score threshold"
 else
     
-    all=`readlink -f ginger_all.gff`
+    prefix="ginger"
+    all=`readlink -f ${prefix}_all.gff`
     GenomePre=`perl -ne 'if (/INPUT_GENOME\s*\=\s*\"(\S+)\"/) {print "$1\n";}' ${NEXTFLOWCONFIG}`
     Genome=`readlink -f ${GenomePre}`
     w=`perl ${sum} ${NEXTFLOWCONFIG}`
-    prefix="ginger"
     n=${THRESHOLD}
     
     mkdir ${prefix}_phase1_result

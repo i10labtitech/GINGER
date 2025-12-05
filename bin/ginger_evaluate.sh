@@ -24,7 +24,7 @@ function abort
 	exit 1
 }
 
-ePath=`dirname $(readlink -f $0)`/../util/evaluation
+ePath=`dirname $(readlink -f $0)`/ginger-util
 
 # Checking input files
 [ -f $1 ] || abort "$1 file not exist." # Validation data

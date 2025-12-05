@@ -28,7 +28,7 @@ function rm_tmpfile {
 }
 
 GINGER_PATH=`dirname $(readlink -f $0)`
-SCRIPT=${GINGER_PATH}/../util/summary
+SCRIPT=${GINGER_PATH}/ginger-util
 
 GenomePre=`perl -ne 'if (/INPUT_GENOME\s*\=\s*\"(\S+)\"/) {print "$1\n";}' ${NEXTFLOWCONFIG}`
 Genome=`readlink -f ${GenomePre}`
