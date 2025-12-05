@@ -13,119 +13,125 @@ genes. This pipeline is implemented using `Nextflow`.
 ## Web site ####################################################################
 
 <https://github.com/i10labtitech/GINGER>
-<https://anaconda.org/i10labtitech/ginger>
 
-## Requirements ################################################################
+## Reference ###################################################################
 
-See `Requirements` section in `INSTALL`.
-
-## Installation ################################################################
-
-See `Installation` section in `INSTALL`.
+Taniguchi T, Okuno M, Shinoda T, Kobayashi F, Takahashi K, Yuasa H, 
+Nakamura Y, Tanaka H, Kajitani R, Itoh T. 
+GINGER: an integrated method for high-accuracy prediction of gene structure 
+in higher eukaryotes at the gene and exon level. 
+DNA Res. 2023 Aug 1;30(4) 
+<https://doi.org/10.1093/dnares/dsad017>
 
 ## Synopsis ####################################################################
-### Settings ###################################################################
+### Requirements ###############################################################
 
-Set `nextflow.config` properly.
-See `Settings` section in `INSTALL`
+`conda` (or alternative) packaging command. Only `linux-64` is supported.
 
 ### Inputs #####################################################################
 
-* A file containing genome sequences (`multi FASTA format`)
-* A file containing masked genome sequences by RpeatMasker (`multi FASTA format`)
-* A file containing repeat information by RpeatMasker (`***.out`)
-* A file containing RNA-Seq 1 (`FASTQ format`)
-* A file containing RNA-Seq 2 (`FASTQ format`)
-* Files containing closely related species
+* A file containing genome sequences (`FASTA format`)
+* A file containing hard-masked genome sequences by RepeatMasker (`FASTA format`)
+* A file containing repeat information by RepeatMasker (`***.out`)
+* A file containing RNA-Seq reads 1 (`FASTQ format`)
+* A file containing RNA-Seq reads 2 (`FASTQ format`)
+* Files containing protein sequences of closely related species (`FASTA format`)
 
-### Commands A (using the Docker image) #########################################
-
-The command to kick the docker image with the prepared Perl script is as follows.
-(Docker image: `i10labtitech/tools:GINGER_v1.0.1`)
+### Installation ###############################################################
 
 ```
-generateSampleData_cel [Directory name for sample input data (e.g. sample_data_cel)]
-# Copy and edit nextflow.config
-runGINGER.pl nextflow.config.user
+git clone --depth 1 https://github.com/i10labtitech/GINGER
+cd GINGER/rattler-build/
+ conda create -n ginger-build -c conda-forge rattler-build
+ conda activate ginger-build
+  rattler-build build
+ conda deactivate
+ conda create -n ginger-run -c ./output -c bioconda -c conda-forge ginger
+cd ../../
+conda activate ginger-run
+gingerInitCfg #./nextflow.config.template is generated.
 ```
 
-* Edit the [The path to the directory that contains `sample_data_cel/`] part of 
-  the variables named `INPUT_GENOME, INPUT_GENOME, INPUT_MASKEDGENOME, INPUT_REPOUT`.
-  `INPUT_RNASEQR1, INPUT_RNASEQR2, PROTEIN`
-* Edit the [The path to the output directory (e.g. `/XXX/XXX/sample_data_cel/`] 
-  part of the variable named PDIR.
-* Edit the variable (path to scrach directory) named `SCRATCH`.
-* Edit the variable (number of threads used) named `N_THREAD`.
-* Edit the variable (maximum memory size used) named `MAX_MEMORY`.
-* Edit the variables named `RNASEQ_OTHER#, HOMOLOGY_OTHER#, ABINITIO_OTHER#, (paths)`
-  `RNASEQ_OTHER#_WEIGHT,  HOMOLOGY_OTHER#_WEIGHT, ABINITIO_OTHER#_WEIGHT, (weights)`
-  when you want to use your annotation data to predict gene structures in GINGER.
-* Note that `#` is the number of annotation data.
+* [Note] If you have modified something, `git commit` it before `rattler-build build`.
+
+### Obtaining test inputs (if you need) ########################################
 
 ```
-cd /XXX/XXX/output_cel/
-runEvaluatePred.pl /XXX/XXX/sample_data_cel/GCF_000002985.6_WBcel235_genomic.gff ./ginger_phase2.gff RNA CDS RNA CDS
+mkdir sampleDir
+
+## download
+curl -L https://ftp.ncbi.nlm.nih.gov/genomes/refseq/invertebrate/Caenorhabditis_elegans/all_assembly_versions/GCF_000002985.6_WBcel235/GCF_000002985.6_WBcel235_genomic.fna.gz -o sampleDir/GCF_000002985.6_WBcel235_genomic.fna.gz
+curl -L https://ftp.ncbi.nlm.nih.gov/genomes/refseq/invertebrate/Caenorhabditis_briggsae/all_assembly_versions/GCF_000004555.2_CB4/GCF_000004555.2_CB4_translated_cds.faa.gz -o sampleDir/GCF_000004555.2_CB4_translated_cds.faa.gz
+curl -L https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/180/635/GCA_000180635.4_El_Paco_v._4/GCA_000180635.4_El_Paco_v._4_translated_cds.faa.gz -o sampleDir/GCA_000180635.4_El_Paco_v._4_translated_cds.faa.gz
+prefetch SRR5849934 -O sampleDir
+
+## preparation
+fastq-dump --split-files sampleDir/SRR5849934/SRR5849934.sra --outdir sampleDir
+zcat sampleDir/GCF_000002985.6_WBcel235_genomic.fna.gz | seqkit seq -i > sampleDir/GCF_000002985.6_WBcel235_genomic.commentModified.fna
+rm sampleDir/GCF_000002985.6_WBcel235_genomic.fna.gz
+perl -pe 'tr/[a-z]/N/ unless /^>/' sampleDir/GCF_000002985.6_WBcel235_genomic.commentModified.fna > sampleDir/GCF_000002985.6_WBcel235_genomic.commentModified.masked.fna
+touch sampleDir/GCF_000002985.6_WBcel235_genomic.out #dummy RepeatMasker output for test purpose.
+gunzip sampleDir/GCF_000004555.2_CB4_translated_cds.faa.gz
+gunzip sampleDir/GCA_000180635.4_El_Paco_v._4_translated_cds.faa.gz
+
+## for comparison
+curl -L https://ftp.ncbi.nlm.nih.gov/genomes/refseq/invertebrate/Caenorhabditis_elegans/all_assembly_versions/GCF_000002985.6_WBcel235/GCF_000002985.6_WBcel235_genomic.gff.gz -o sampleDir/GCF_000002985.6_WBcel235_genomic.gff.gz
+gunzip sampleDir/GCF_000002985.6_WBcel235_genomic.gff.gz
 ```
 
-### Commands B (using installed GINGER) ##########################################
+* [Note] On setting `nextflow.config` (see below), delete the items for the third species in `HOMOLOGY_DATA` and set `SPALNDB` as `NematodC`.
 
-The command to run GINGER after installing it is as follows.
-Put nextflow.config into your working directory.
-If you want to run the preparation phase all at once, type like following.
-phase2.sh requires an argument specifying minimum CDS length. 50 is an example.
-
-If you have installed the conda package using "conda" or "mamba" command,
-you can obatain the automatically configured nextflow.config file for tool paths
-in the current directory using the "gingerInitCfg" command.
-
-```(If you have installed the conda package using "conda" or "mamba" command)
-mamba install -c i10labtitech ginger
-gingerInitCfg
-# Then, a nextflow.config file will be generated in the current directory.
-# Edit the paths of input files, the output directory, the scratch directory path,
-# the number of threads used, and the maximum memory capacity, among other settings,
-# in the nextflow.config file.
-```
+### Settings ###################################################################
 
 ```
-nextflow -C nextflow.config run /path/to/pipeline/ginger.nf
-/path/to/pipeline/phase0.sh nextflow.config
-/path/to/pipeline/phase1.sh nextflow.config > phase1.log
-/path/to/pipeline/phase2.sh 50
-/path/to/pipeline/summary.sh nextflow.config
+cp nextflow.config.template nextflow.config
 ```
-* [Note] `/path/to/pipeline/` a path to a directory <"pipeline/" in GINGER's source tree>
+
+Edit `nextflow.config` properly. [Note] File or directory names should be set as full paths.
+* Edit the the variables named `INPUT_GENOME, INPUT_MASKEDGENOME, INPUT_REPOUT, INPUT_RNASEQR1, INPUT_RNASEQR2, HOMOLOGY_DATA`.
+* Edit the variable named `PDIR` (output directory name).
+* Edit the variable named `SCRATCH` (path to scratch directory).
+* Edit the variable named `N_THREAD` (number of threads used).
+* Edit the variable named `MAX_MEMORY` (maximum memory size used).
+
+### Run ########################################################################
+
+```
+ginger.nf #or "nextflow run $(which ginger.nf) -c nextflow.config"
+ginger_phase0.sh nextflow.config
+ginger_phase1_auto.sh nextflow.config > phase1.log
+ginger_phase2.sh 50 #minimum CDS length. 50 is just an example.
+```
+
 * [Note] An automatically calculated threshold for the score is written 
-       like `score threshold = 1.25` in `phase1.log`.
+  like `score threshold = 1.25` in `phase1.log`.
 
-If you want to run each methods separetely in the preparation phase, type like
-following. `abinitio.nf` must be executed after `mapping.nf`. The order in which
-`denovo.nf` and `homology.nf` are executed do not depend on them.
-
-```
-nextflow -C nextflow.config run /path/to/pipeline/mapping.nf
-nextflow -C nextflow.config run /path/to/pipeline/denovo.nf
-nextflow -C nextflow.config run /path/to/pipeline/abinitio.nf
-nextflow -C nextflow.config run /path/to/pipeline/homology.nf
-/path/to/pipeline/phase0.sh nextflow.config
-/path/to/pipeline/phase1.sh nextflow.config > phase1.log
-/path/to/pipeline/phase2.sh 50
-/path/to/pipeline/summary.sh nextflow.config
-```
-
-To set a threshold for reconstructed gene structure's scores in the `merge` phase,
-type like following (use `phase1_manual.sh` instead of `phase1.sh`). The first
-argument is the threshold. 1.0 is an example.
+To set a threshold for reconstructed gene structure's scores, 
+use `ginger_phase1_manual.sh` with an extra argument for the threshold 
+instead of `ginger_phase1_auto.sh`.
 
 ```
-/path/to/pipeline/phase1_manual.sh nextflow.config 1.0
+rm -r ginger_phase1.gff ginger_phase1_result/
+ginger_phase1_manual.sh nextflow.config 1.0 #1.0 is just an example.
+ginger_phase2.sh 50 #50 is just an example.
 ```
+
+<!--
+You may summarize the result for test inputs.
+
+```
+ginger_summary.sh nextflow.config
+ginger_evaluate.sh sampleDir/GCF_000002985.6_WBcel235_genomic.gff ginger_phase2.gff mRNA CDS mRNA CDS
+```
+-->
 
 ### Final output ###############################################################
 
 The final outputs:
-* `ginger_phase2.gff` : gene structures by GINGER (GFF3) 
+* `ginger_phase2.gff` : gene structures by GINGER (GFF3).
   [Note] See http://gmod.org/wiki/GFF3 for details.
+<!--
 * `ginger.pep`        : protein sequences of the gene structurs (FASTA)
 * `ginger.cds`        : CDS of the gene structures (FASTA)
 * `ginger_stats.tsv`  : statistical information of gene structures
+-->
