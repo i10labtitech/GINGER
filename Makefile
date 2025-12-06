@@ -133,20 +133,16 @@ $(DEST)/Grouping $(DEST)/subgroup $(DEST)/new_subgroup $(DEST)/Searchalgo \
 $(DEST)/phase1_gff_editor $(DEST)/initial_exon_polish
 
 
-merge_phase2: geneadd_v191115 geneadd_v191119 grouping_v1
+merge_phase2: geneadd grouping_v1
 
-geneadd_v191115: ${SRC}/geneadd_v191115.cpp
-	${GXX} ${SRC}/geneadd_v191115.cpp -o ${DEST}/geneadd_v191115 -std=c++0x -O3
-
-geneadd_v191119: ${SRC}/geneadd_v191119.cpp
-	${GXX} ${SRC}/geneadd_v191119.cpp -o ${DEST}/geneadd_v191119 -std=c++0x -O3
+geneadd: ${SRC}/geneadd.cpp
+	${GXX} ${SRC}/geneadd.cpp -o ${DEST}/geneadd -std=c++0x -O3
 
 grouping_v1: ${SRC}/grouping_v1.cpp
 	${GXX} ${SRC}/grouping_v1.cpp -o ${DEST}/grouping_v1 -std=c++0x -O3
 
 clean_merge_phase2:
-	rm -f \
-$(DEST)/geneadd_v191115 $(DEST)/geneadd_v191119 $(DEST)/grouping_v1
+	rm -f $(DEST)/geneadd $(DEST)/grouping_v1
 
 
 summary: final_reform
