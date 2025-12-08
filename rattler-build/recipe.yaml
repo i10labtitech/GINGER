@@ -1,5 +1,5 @@
 context:
-  version: "1.0.2"
+  version: "1.0.2.dev"
   build_number: 0
 
 package:
@@ -54,7 +54,7 @@ requirements:
     - gffutils ==0.12 pyh7cba7a3_0
     - jellyfish ==0.9.0 py37h540881e_1
     - salmon ==0.14.2 ha0cc327_0
-    - spaln ==2.4.7 pl5262h9a82719_0
+    - spaln ==2.3.3c pl526he860b03_0
     - sed ==4.8 he412f7d_0
     - gcc ==13.2.0 h574f8da_2
     - augustus ==3.3.2 pl526h985c5e9_2
