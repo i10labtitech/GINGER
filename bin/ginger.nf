@@ -28,7 +28,7 @@ if (file(params.PDIR).isDirectory()) {
     }
 }
 if (file(params.PDIR_PREP).isDirectory()) {
-    error "The publish directory already exists: \"${params.PDIR_PREP}\""
+//    error "The publish directory already exists: \"${params.PDIR_PREP}\""
 } else {
     if (file(params.PDIR_PREP).isEmpty()) {
         print "mkdir \"${params.PDIR_PREP}/\"\n"
@@ -57,7 +57,7 @@ if (file(params.INPUT_REPOUT).isFile())    {} else { error "No path : \"${params
 if (file(params.INPUT_RNASEQR1).isFile())  {} else { error "No path : \"${params.INPUT_RNASEQR1}\"" }
 if (file(params.INPUT_RNASEQR2).isFile())  {} else { error "No path : \"${params.INPUT_RNASEQR2}\"" }
 // if (file("${params.AUGUSTUS_SPEC_DIR}/${params.AUGUSTUS_SPEC}").isDirectory()) {error "\"${params.AUGUSTUS_SPEC}\" is in ${params.AUGUSTUS_SPEC_DIR}!\n Rename or remove \"${params.AUGUSTUS_SPEC_DIR}/${params.AUGUSTUS_SPEC}\"."} 
-if (file("${params.AUGUSTUS_WORK_DIR}").isDirectory()) { error "The working directory for Augustus already exists: \"${params.AUGUSTUS_WORK_DIR}\"" }
+// if (file("${params.AUGUSTUS_WORK_DIR}").isDirectory()) { error "The working directory for Augustus already exists: \"${params.AUGUSTUS_WORK_DIR}\"" }
 
 hDataChPrefix  = Channel.from(params.HOMOLOGY_DATA['PREFIX'])
 hDataChProtein = Channel.from(params.HOMOLOGY_DATA['PROTEIN'])
@@ -440,7 +440,6 @@ process augustus {
 #    export AUGUSTUS_CONFIG_PATH="!{params.AUGUSTUS_CONFIG_DIR}"
     export AUGUSTUS_CONFIG_PATH="!{params.AUGUSTUS_WORK_DIR}/config"
     export PATH="$PATH:!{params.AUGUSTUS_SCRIPT_DIR}"
-    export PATH="$PATH:!{params.AUGUSTUS_BIN_DIR}"
 
     script=!{params.UTILPATH_ABINITIO}
 

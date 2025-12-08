@@ -10,7 +10,7 @@ params {
     INPUT_REPOUT       = "/full/path/to/output from RepeatMasker" // An output file from RepeatMasker
     // RNA-Seq-based method
     INPUT_RNASEQR1     = "/full/path/to/RNA-Seq read 1" // FASTQ format
-    INPUT_RNASEQR2     = "/full/path/to/RNA-Seq read 1" // FASTQ format
+    INPUT_RNASEQR2     = "/full/path/to/RNA-Seq read 2" // FASTQ format
     INPUT_OASESR1 = "${INPUT_RNASEQR1}"
     INPUT_OASESR2 = "${INPUT_RNASEQR2}"
     // Homology-based method
@@ -169,7 +169,7 @@ params {
     AUGUSTUS_SCRIPT_DIR    = "${AUGUSTUS_DIR}/scripts" // *** No need to edit ***
     AUGUSTUS_CONFIG_DIR    = "${AUGUSTUS_DIR}/config" // *** No need to edit ***
     AUGUSTUS_SPEC_DIR      = "${AUGUSTUS_DIR}/config/species" // *** No need to edit ***
-    AUGUSTUS_WORK_DIR      = "${PDIR}/augustus_config" // *** No need to edit ***
+    AUGUSTUS_WORK_DIR      = "${PDIR_PREP_ABINITIO}/augustus_config" // *** No need to edit ***
     AUGUSTUS_SPEC          = "ginger" // a directory name that stores a new trained model
                                       // the name must be unique within "[Augutus root]/config/species/"
     AUGUSTUS_TRAINING_DATA = "${PDIR_PREP_MAPPING_TOLEARN2ND}/${OPREFIX}_learn_2nd.gff3" // *** No need to edit ***
