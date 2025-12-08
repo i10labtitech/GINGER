@@ -276,8 +276,8 @@ process oases {
     publishDir "${params.PDIR_PREP_DENOVO_OASES}", mode: 'copy', overwrite: false
 
     input:
-    path rnaSeqRead1 from params.INPUT_RNASEQR1
-    path rnaSeqRead2 from params.INPUT_RNASEQR2
+    path rnaSeqRead1 from params.INPUT_OASESR1
+    path rnaSeqRead2 from params.INPUT_OASESR2
         
     output:
     file "${params.OPREFIX}/transcripts.fa" into oasesFasta

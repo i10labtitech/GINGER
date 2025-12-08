@@ -11,6 +11,8 @@ params {
     // RNA-Seq-based method
     INPUT_RNASEQR1     = "/full/path/to/RNA-Seq read 1" // FASTQ format
     INPUT_RNASEQR2     = "/full/path/to/RNA-Seq read 1" // FASTQ format
+    INPUT_OASESR1 = "${INPUT_RNASEQR1}"
+    INPUT_OASESR2 = "${INPUT_RNASEQR2}"
     // Homology-based method
     HOMOLOGY_DATA = [
         "PREFIX"  : ["SpeciesA",  // a prefix of a file name (any string that can be used as a file name)
