@@ -83,6 +83,7 @@ process mapping {
     
     output:
     file "${params.OPREFIX}.gtf" into gtf
+    file "tmp_mapping_${params.OPREFIX}/${params.OPREFIX}.sorted.bam"
     
     shell:
     '''
