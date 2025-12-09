@@ -21,6 +21,8 @@ from operator import itemgetter
 
 args = sys.argv
 
+complement = str.maketrans("acgtACGT", "tgcaTGCA")
+
 def id_trim(values, name):
     records = values[8].split(";")
     for item in records:
@@ -167,9 +169,11 @@ with open(args[1], "r") as data:
                     #print(cds_data)
                     for item in cds_data:
                         tmp_seq += genome_dict[item[0]][item[1]-1:item[2]][::-1]
+                    tmp_seq = tmp_seq.translate(complement)
                 tmp_seq = tmp_seq[cds_data[0][4]:]
                 id_w_data.append(">" + mrna_id)
                 cds_w_data.append(tmp_seq)
+                tmp_seq = tmp_seq.upper()
                 pep_w_data.append(translate(tmp_seq))
             mrna_id = id_trim(line_table, "ID")
             cds_data = []
@@ -185,9 +189,11 @@ with open(args[1], "r") as data:
                 cds_data.sort(key=itemgetter(2), reverse=True)
                 for item in cds_data:
                     tmp_seq += genome_dict[item[0]][item[1]-1:item[2]][::-1]
+                tmp_seq = tmp_seq.translate(complement)
             tmp_seq = tmp_seq[cds_data[0][4]:]
             id_w_data.append(">" + mrna_id)
             cds_w_data.append(tmp_seq)
+            tmp_seq = tmp_seq.upper()
             pep_w_data.append(translate(tmp_seq))
 
 l_width = 60
