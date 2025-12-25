@@ -26,6 +26,7 @@ function rm_tmpfile {
     rm -f ${TMPFILE}.*
     rm -f ${TMPFILE}
 }
+trap rm_tmpfile EXIT INT PIPE TERM
 
 GINGER_PATH=`dirname $(readlink -f $0)`
 SCRIPT=${GINGER_PATH}/ginger-util
