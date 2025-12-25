@@ -70,7 +70,7 @@ Edit `nextflow.config` properly. [Note] File or directory names should be set as
 ### Run ########################################################################
 
 ```
-nextflow run $(which ginger.nf) -c nextflow.config
+nextflow run $(which ginger_prep.nf) -c nextflow.config
 ginger_phase0.sh nextflow.config
 ginger_phase1_auto.sh nextflow.config > phase1.log
 ginger_phase2.sh 100 #minimum CDS length. 100 is just an example.
@@ -104,7 +104,7 @@ The final outputs:
 * `ginger.cds`        : CDS of the gene structures (FASTA)
 * `ginger_stats.tsv`  : statistical information of gene structures
 
-## Obtaining test inputs (if you need) #########################################
+### Obtaining test inputs (if you need) ########################################
 
 ```
 mkdir sampleDir
@@ -115,7 +115,7 @@ curl -L https://ftp.ncbi.nlm.nih.gov/genomes/refseq/invertebrate/Caenorhabditis_
 curl -L https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/180/635/GCA_000180635.4_El_Paco_v._4/GCA_000180635.4_El_Paco_v._4_translated_cds.faa.gz -o sampleDir/GCA_000180635.4_El_Paco_v._4_translated_cds.faa.gz
 prefetch SRR5849934 -O sampleDir
 
-## preparation
+## formatting
 fastq-dump --split-files sampleDir/SRR5849934/SRR5849934.sra --outdir sampleDir
 rm -r sampleDir/SRR5849934/
 zcat sampleDir/GCF_000002985.6_WBcel235_genomic.fna.gz | seqkit seq -i > sampleDir/GCF_000002985.6_WBcel235_genomic.commentModified.fna
@@ -132,3 +132,40 @@ ginger_evaluate.sh sampleDir/GCF_000002985.6_WBcel235_genomic.gff ginger_phase2.
 ```
 
 * [Note] On setting `nextflow.config`, delete the items for the third species in `HOMOLOGY_DATA` and set `SPALNDB` as `NematodC`.
+
+## Frequently Asked Questions ##################################################
+
+### How to set SPALNDB?
+
+See `${CONDA_PREFIX}/share/spaln/table/gnm2tab` and select a term in the second column based on the species names in the third column. Suboptimal one may work.
+
+### The process `oases` was halted by error.
+
+If RNA-seq reads is too large to run `oases`, it may be skipped, for example:
+
+```
+touch emptyR1.fq emptyR2.fq
+nextflow run $(which ginger_prep.nf) -c nextflow.config -resume --INPUT_OASESR1=$(pwd)/emptyR1.fq --INPUT_OASESR2=$(pwd)/emptyR2.fq
+```
+
+### The process `denovo` was halted by error.
+
+If genome size is too large, the command `gmapl` may be used instead of `gmap`, for example:
+
+```
+nextflow run $(which ginger_prep.nf) -c nextflow.config -resume --GMAP=${CONDA_PREFIX}/bin/gmapl
+```
+
+### Some predicted genes don't start/stop properly.
+
+GINGER was designed to predict partial genes, too. They may be discarded by some tool like `gffread -J`, if you need.
+
+### How to incooporate external GFFs?
+
+In Phase0, GINGER writes five GFF3 files which are the results of the Prep phase: `ginger_mappingbase.gff, ginger_denovobase.gff, ginger_augustus.gff, ginger_snap.gff and ginger_homology.gff`. The external GFF should follow their style.
+
+* The 2nd column is `RNASEQ_OTHER`, `HOMOLOGY_OTHER` or `ABINITIO_OTHER`.
+* The 3rd column is `mRNA` or `CDS`.
+* The 6th column of `CDS` is a score for the segment and its maximum is 1.0.
+
+Run `ginger_phase0.sh` after setting the file paths and the relative weights of external GFFs in `nextflow.config`, then `ginger_all.gff` will be a merging of both the external files and the original five GFF files.
