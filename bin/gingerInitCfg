@@ -1,0 +1,108 @@
+#!/usr/bin/env perl
+
+use FindBin;
+
+my $binRootDir = $FindBin::Bin;
+$binRootDir    =~ s/\/bin$//;
+my $envRootDir = $ENV{CONDA_PREFIX};
+my $nextflowCfgTmplate = "$binRootDir/bin/ginger-util/nextflow.config.template";
+
+my$newCfg = "";
+
+open(IN, $nextflowCfgTmplate) or die "can not open a file \"$nextflowCfgTmplate\".";
+while (<IN>) {
+    if (/^\s*GINGER\s*=/)      { s/"\S+".*$/\"$binRootDir\" \/\/ @@@ set by gingerInitCfg (a script in GINGER conda pkg) @@@/; }
+    if (/^\s*HISAT2\s*=/)      { my $aPath = &getPath("hisat2"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg (a script in GINGER conda pkg) @@@/; }
+    if (/^\s*HISAT2BUILD\s*=/) { my $aPath = &getPath("hisat2-build"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg (a script in GINGER conda pkg) @@@/; }
+    if (/^\s*SAMTOOLS\s*=/)    { my $aPath = &getPath("samtools"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg (a script in GINGER conda pkg) @@@/; }
+    if (/^\s*STRINGTIE\s*=/)   { my $aPath = &getPath("stringtie"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg (a script in GINGER conda pkg) @@@/; }
+    if (/^\s*SEQKIT\s*=/)      { my $aPath = &getPath("seqkit"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg (a script in GINGER conda pkg) @@@/; }
+    if (/^\s*TD_LONGORFS\s*=/) { my $aPath = &getPath("TransDecoder.LongOrfs"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
+    if (/^\s*TD_PREDICT\s*=/)  { my $aPath = &getPath("TransDecoder.Predict"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
+    if (/^\s*TD_UTIL\s*=/)     {
+	my $aPath = "$envRootDir/opt/transdecoder/util/";
+	if (-e $aPath) {
+	    s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/;
+	} else {
+	    print STDERR "$aPath\n";
+	}
+    }    
+    if (/^\s*GFFREAD\s*=/)     { my $aPath = &getPath("gffread"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
+    if (/^\s*CD_HIT\s*=/)      { my $aPath = &getPath("cd-hit"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
+    if (/^\s*DENOVO_PYTHON\s*=/) { my $aPath = &getPath("python"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
+    if (/^\s*VELVETH\s*=/)     { my $aPath = &getPath("velveth"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
+    if (/^\s*VELVETG\s*=/)     { my $aPath = &getPath("velvetg"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
+    if (/^\s*OASES\s*=/)       { my $aPath = &getPath("oases"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
+    if (/^\s*TRINITY\s*=/)     { my $aPath = &getPath("Trinity"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
+    if (/^\s*GMAP_BUILD\s*=/)  {
+	my $aLine = $_;
+	my $aPath = &getPath("gmap_build");
+	&fixGmapBuild($aPath, "$aPath\_fixedByGinger");
+	$aLine =~ s/"\S+".*$/\"$aPath\_fixedByGinger\" \/\/ @@@ set by gingerInitCfg script @@@/;
+	$_ = $aLine;
+    }
+    if (/^\s*GMAP\s*=/)        { my $aPath = &getPath("gmap"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
+    if (/^\s*CD_HIT_EST\s*=/)  { my $aPath = &getPath("cd-hit-est"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
+    if (/^\s*SPALN\s*=/)       { my $aPath = &getPath("spaln"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
+    if (/^\s*MAKEIDX\s*=/)     { my $aPath = &getPath("makeidx.pl"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
+    if (/^\s*MAKBLK\s*=/)      { my $aPath = &getPath("makblk.pl"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
+    if (/^\s*AUGUSTUS_DIR\s*=/)     {
+	 s/"\S+".*$/\"$envRootDir\" \/\/ @@@ set by gingerInitCfg script @@@/;
+    }
+    if (/^\s*AUGUSTUS_SCRIPT_DIR\s*=/) {
+	s/scripts\".*$/bin\" \/\/ @@@ set by gingerInitCfg script @@@/;
+    }
+    if (/^\s*SNAP_DIR\s*=/)     {
+	my $aPath = &getPath("snap");
+	$aPath =~ s/snap\s*$//;
+	 s/"\S+".*$/\"$envRootDir\/bin\" \/\/ @@@ set by gingerInitCfg script @@@/;
+    }
+   
+    $newCfg .= $_;
+}
+close(IN);
+
+open(OUT, ">./nextflow.config.template") or die "can not open a file \"> ./nextflow.config.template\".";
+print OUT $newCfg;
+close(OUT);
+
+sub getPath {
+    my($tool) = @_;
+
+    my $aPath = `which $tool`;
+
+    if ($aPath =~ /no $tool in/) {
+	die "No $tool found!";
+    }
+    
+    chomp($aPath);
+
+    return $aPath;
+}
+
+sub fixGmapBuild {
+    my($anOrgPath, $fixedPath) = @_;
+
+    open(GMAP, $anOrgPath) or die "can not open a file \"$anOrgPath\".";
+    open(GMAPFIXED, "> $fixedPath") or die "can not open a file \"> $fixedPath\".";
+    while (<GMAP>) {
+	if (/\\\"\$bindir\/fa_coords\\\"/) {
+	    my $aLine = $_;
+	    print GMAPFIXED "\#", $aLine;
+	    $aLine =~ s/\\\"\$bindir\/fa_coords\\\"/perl \\\"\$bindir\/fa_coords\\\"/;
+	    print GMAPFIXED $aLine;
+	} elsif (/\\\"\$bindir\/gmap_process\\\"/) {
+	    my $aLine = $_;
+	    print GMAPFIXED "\#", $aLine;
+	    $aLine =~ s/\\\"\$bindir\/gmap_process\\\"/perl \\\"\$bindir\/gmap_process\\\"/;
+	    print GMAPFIXED $aLine;
+	} else {
+	    print GMAPFIXED $_;
+	}
+    }
+    close(GMAP);
+    close(GMAPFIXED);
+
+    chmod(0755, $fixedPath);
+}
+
