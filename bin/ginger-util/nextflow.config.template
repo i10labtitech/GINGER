@@ -97,6 +97,7 @@ params {
     
     // --- Tools for mapping ---
     HISAT2      = "/path/to/hisat2" // a full path to HISAT2 command "hisat2"
+    HISAT2OPTS  = "--dta --no-discordant --no-mixed" // options for "hisat2"
     HISAT2BUILD = "/path/to/hisat2-build" // a full path to HISAT2 build command "hisat2-build"
     SAMTOOLS    = "/path/to/samtools" // a full path to SMAtools command "samtools"
     STRINGTIE   = "/path/to/stringtie" // a full path to StringTie command "stringtie"

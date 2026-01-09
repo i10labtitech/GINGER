@@ -92,7 +92,7 @@ process mapping {
     
     # Mapping
     !{params.HISAT2BUILD} -p !{params.N_THREAD} !{genomeFasta} !{params.OPREFIX}_tmp_index/!{params.OPREFIX}_index
-    !{params.HISAT2} -p !{params.N_THREAD} -x !{params.OPREFIX}_tmp_index/!{params.OPREFIX}_index -1 !{rnaSeqRead1} -2 !{rnaSeqRead2} -S tmp_mapping_!{params.OPREFIX}/!{params.OPREFIX}.sam --dta --no-discordant --no-mixed
+    !{params.HISAT2} -p !{params.N_THREAD} -x !{params.OPREFIX}_tmp_index/!{params.OPREFIX}_index -1 !{rnaSeqRead1} -2 !{rnaSeqRead2} -S tmp_mapping_!{params.OPREFIX}/!{params.OPREFIX}.sam !{params.HISAT2OPTS}
     !{params.SAMTOOLS} view -bS -@ !{params.N_THREAD} tmp_mapping_!{params.OPREFIX}/!{params.OPREFIX}.sam | !{params.SAMTOOLS} sort -@ !{params.N_THREAD} -o tmp_mapping_!{params.OPREFIX}/!{params.OPREFIX}.sorted.bam
     
     # Gene prediction
