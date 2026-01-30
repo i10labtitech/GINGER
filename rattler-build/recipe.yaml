@@ -190,7 +190,6 @@ requirements:
     - perl-sub-quote 
     - perl-class-method-modifiers 
     - perl-xsloader 
-    - perl-db-file 
     - perl-parent 
     - perl-constant 
     - htslib ==1.17
