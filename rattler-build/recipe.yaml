@@ -39,7 +39,6 @@ requirements:
     - perl-carp
     - perl-pathtools
     - perl-data-dumper 
-    - perl-db_file 
     - perl-findbin 
     - perl-storable 
     - perl-uri 
