@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
 # 
