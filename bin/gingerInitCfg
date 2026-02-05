@@ -34,13 +34,7 @@ while (<IN>) {
     if (/^\s*VELVETG\s*=/)     { my $aPath = &getPath("velvetg"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
     if (/^\s*OASES\s*=/)       { my $aPath = &getPath("oases"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
     if (/^\s*TRINITY\s*=/)     { my $aPath = &getPath("Trinity"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
-    if (/^\s*GMAP_BUILD\s*=/)  {
-	my $aLine = $_;
-	my $aPath = &getPath("gmap_build");
-	&fixGmapBuild($aPath, "$aPath\_fixedByGinger");
-	$aLine =~ s/"\S+".*$/\"$aPath\_fixedByGinger\" \/\/ @@@ set by gingerInitCfg script @@@/;
-	$_ = $aLine;
-    }
+    if (/^\s*GMAP_BUILD\s*=/)  { my $aPath = &getPath("gmap_build"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
     if (/^\s*GMAP\s*=/)        { my $aPath = &getPath("gmap"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
     if (/^\s*CD_HIT_EST\s*=/)  { my $aPath = &getPath("cd-hit-est"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
     if (/^\s*SPALN\s*=/)       { my $aPath = &getPath("spaln"); s/"\S+".*$/\"$aPath\" \/\/ @@@ set by gingerInitCfg script @@@/; }
@@ -80,29 +74,4 @@ sub getPath {
     return $aPath;
 }
 
-sub fixGmapBuild {
-    my($anOrgPath, $fixedPath) = @_;
-
-    open(GMAP, $anOrgPath) or die "can not open a file \"$anOrgPath\".";
-    open(GMAPFIXED, "> $fixedPath") or die "can not open a file \"> $fixedPath\".";
-    while (<GMAP>) {
-	if (/\\\"\$bindir\/fa_coords\\\"/) {
-	    my $aLine = $_;
-	    print GMAPFIXED "\#", $aLine;
-	    $aLine =~ s/\\\"\$bindir\/fa_coords\\\"/perl \\\"\$bindir\/fa_coords\\\"/;
-	    print GMAPFIXED $aLine;
-	} elsif (/\\\"\$bindir\/gmap_process\\\"/) {
-	    my $aLine = $_;
-	    print GMAPFIXED "\#", $aLine;
-	    $aLine =~ s/\\\"\$bindir\/gmap_process\\\"/perl \\\"\$bindir\/gmap_process\\\"/;
-	    print GMAPFIXED $aLine;
-	} else {
-	    print GMAPFIXED $_;
-	}
-    }
-    close(GMAP);
-    close(GMAPFIXED);
-
-    chmod(0755, $fixedPath);
-}
 
