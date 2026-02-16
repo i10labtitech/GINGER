@@ -40,7 +40,7 @@ DNA Res. 2023 Aug 1;30(4)
 ### Installation ###############################################################
 
 ```
-git clone --depth 1 https://github.com/i10labtitech/GINGER
+git clone https://github.com/i10labtitech/GINGER
 cd GINGER/rattler-build/
  conda create -n ginger-build -c conda-forge rattler-build
  conda activate ginger-build

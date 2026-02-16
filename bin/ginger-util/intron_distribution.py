@@ -18,7 +18,6 @@
 
 import sys
 import numpy as np
-import matplotlib.pyplot as plt
 
 args = sys.argv
 
@@ -57,6 +56,7 @@ print(len(data_over))
 
 # plot
 '''
+import matplotlib.pyplot as plt
 fig =  plt.figure()
 ax = fig.add_subplot(111)
 ax.hist(data_trim, bins = [i * 0.05 for i in range(120)])
