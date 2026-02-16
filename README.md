@@ -165,7 +165,7 @@ GINGER was designed to predict partial genes, too. They may be discarded by some
 In Phase0, GINGER writes five GFF3 files which are the results of the Prep phase: `ginger_mappingbase.gff, ginger_denovobase.gff, ginger_augustus.gff, ginger_snap.gff and ginger_homology.gff`. The external GFF should follow their style.
 
 * The 2nd column is `RNASEQ_OTHER`, `HOMOLOGY_OTHER` or `ABINITIO_OTHER`.
-* The 3rd column is `mRNA` or `CDS`.
+* The 3rd column is `mRNA` or `CDS`. CDS lines are just after the corresponding mRNA line and following the order of the strand.
 * The 6th column of `CDS` is a score for the segment and its maximum is 1.0.
 
 Run `ginger_phase0.sh` after setting the file paths and the relative weights of external GFFs in `nextflow.config`, then `ginger_all.gff` will be a merging of both the external files and the original five GFF files.
