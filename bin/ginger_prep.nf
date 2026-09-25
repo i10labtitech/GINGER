@@ -319,7 +319,7 @@ process denovo {
 
     ### GMAP alignment ###
     !{params.GMAP_BUILD} -D . -d !{params.OPREFIX}_genome_gmap_DB !{genomeFasta} > !{params.OPREFIX}_gmap_build.log 2>&1
-    !{params.GMAP} -S -t !{params.N_THREAD} -n 1 -D . -d !{params.OPREFIX}_genome_gmap_DB !{params.OPREFIX}_denovo.cd.fasta > !{params.OPREFIX}_denovo.cd.fasta.gmap 2> !{params.OPREFIX}_gmap.stderr
+    !{params.GMAP} -S -t !{params.N_THREAD} !{params.GMAP_OPTS} -D . -d !{params.OPREFIX}_genome_gmap_DB !{params.OPREFIX}_denovo.cd.fasta > !{params.OPREFIX}_denovo.cd.fasta.gmap 2> !{params.OPREFIX}_gmap.stderr
     
     ### filtering alignment result ###
     !{params.DENOVO_PYTHON} !{params.UTILPATH_DENOVO}/filtering.py !{params.OPREFIX}_denovo.cd.fasta.gmap 95 > !{params.OPREFIX}_denovo.cd.fasta.gmap.filtered
@@ -377,7 +377,7 @@ process homology {
     !{params.MAKEIDX} -ip refer.mfa
 
     # Exon identity calculation
-    !{params.SPALN} -Q7 -O4 -ospalnresult_o4 -M -yS# -T!{spalndb} -yB# -yZ -t!{params.N_THREAD} -drefer relate.faa 
+    !{params.SPALN} -t!{params.N_THREAD} !{params.SPALNOPTS} -ospalnresult_o4 -T!{spalndb} -drefer relate.faa
     mv spalnresult_o4 !{params.OPREFIX}_spalnresult_alignment.tsv
     
     # Output file 

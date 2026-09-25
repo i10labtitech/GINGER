@@ -100,7 +100,7 @@ ginger_summary.sh nextflow.config
 The final outputs:
 * `ginger_phase2.gff` : gene structures by GINGER (GFF3).
   [Note] See http://gmod.org/wiki/GFF3 for details.
-* `ginger.pep`        : protein sequences of the gene structurs (FASTA)
+* `ginger.pep`        : protein sequences of the gene structures (FASTA)
 * `ginger.cds`        : CDS of the gene structures (FASTA)
 * `ginger_stats.tsv`  : statistical information of gene structures
 

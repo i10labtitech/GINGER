@@ -133,6 +133,7 @@ params {
     TRINITY         = "/path/to/Trinity" // a path to Trinity command "Trinity"
     GMAP_BUILD      = "/path/to/gmap_build" // a path to GMAP command "gmap_build"
     GMAP            = "/path/to/gmap" // a path to GMAPL command "gmap"
+    GMAP_OPTS       = "-n 1" // options for "gamp"
     CD_HIT_EST      = "/path/to/cd-hit-est" // a path to CD-HIT command "cd-hit-est"
 
     // --- Options related to trinity ---
@@ -151,6 +152,7 @@ params {
 
     // --- Tools for homology ---
     SPALN             = "/path/to/spaln" // a full path to Spaln command "spaln"
+    SPALNOPTS         = "-Q7 -O4 -M -yS# -yB# -yZ" // options for "spaln"
     MAKEIDX           = "/path/to/makeidx.pl" // a full path to Spaln command "makeidx.pl"
     MAKBLK            = "/path/to/makblk.pl" // a full path to Spaln command "makblk.pl"        
 
