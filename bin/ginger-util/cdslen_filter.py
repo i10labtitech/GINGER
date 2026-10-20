@@ -47,3 +47,9 @@ with open(args[1], "r") as data:
             tmp_cds.append(line_trim)
             cds_len += (int(line_table[4]) - int(line_table[3]) + 1)
 
+if tmp_cds != []:
+    if threshold < cds_len:
+        print(tmp_mrna)
+        for item in tmp_cds:
+            print(item)
+
