@@ -1,5 +1,5 @@
 context:
-  version: "1.0.2.dev2"
+  version: "1.0.2a2"
   build_number: 1
 
 package:
