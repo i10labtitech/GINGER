@@ -20,12 +20,13 @@ import sys
 
 args = sys.argv
 
-if len(args) != 3:
+if len(args) < 3:
     print("Usage:")
-    print("python " + args[0] + " Group.gff [threshold(%)]")
+    print("python " + args[0] + " Group.gff [threshold(%)] [one_class_min_score]")
     sys.exit()
 
 threshold = float(args[2])
+one_class_min = float(args[3]) if len(args) > 3 else 0.0   # >0: also rescue 1-class groups at/above this weighted score
 group_dict = {}
 counter = 1
 
@@ -36,23 +37,22 @@ def score_compare(group):
     score_dict = {}
     new_score_dict = {}
     for item in group:
-        key = item[1] + "_" + item[3] + "_" + item[4] + "_" + item[6] + "_" + item[7]
+        key = (item[1], item[3], item[4], item[6], item[7])   # tuple key: source tags may contain "_"
         score = float(item[5])
         score_dict.setdefault(key, 0.0)
         if score_dict[key] < score:
             score_dict[key] = score
     for key, value in score_dict.items():
-        item_table = key.split("_")
-        new_key = "_".join(item_table[1:])
+        new_key = key[1:]
         new_score_dict.setdefault(new_key, 0.0)
         new_score_dict[new_key] += value
     max_score = 0.0
-    max_key = ""
+    max_key = None
     for key, value in new_score_dict.items():
         if max_score < value:
             max_score = value
             max_key = key
-    max_items = max_key.split("_")
+    max_items = list(max_key)
     print(scaffold + "\tphase2\tmRNA\t" + max_items[0] + "\t" + max_items[1] + "\t" + "{:.3f}".format(max_score) + "\t" + max_items[2] + "\t.\tID=single_exon_gene_" + str(counter))
     print(scaffold + "\tphase2\tCDS\t" + max_items[0] + "\t" + max_items[1] + "\t" + "{:.3f}".format(max_score) + "\t" + max_items[2] + "\t" + max_items[3] + "\tID=single_exon_gene_" + str(counter) + ".1;Parent=single_exon_gene_" + str(counter))
     counter += 1
@@ -83,15 +83,23 @@ for value in group_dict.values():
     rna_flag = 0
     homology_flag = 0
     abinitio_flag = 0
+    best_class_score = {"rna": 0.0, "hom": 0.0, "abi": 0.0}
     for item in filtered_group:
         method = item[1]
-        if method == "mappingbase" or method == "denovobase":
+        score = float(item[5])
+        if method == "mappingbase" or method == "denovobase" or method.startswith("RNASEQ_OTHER"):
             rna_flag = 1
-        elif method == "homology":
+            best_class_score["rna"] = max(best_class_score["rna"], score)
+        elif method == "homology" or method.startswith("HOMOLOGY_OTHER"):
             homology_flag = 1
-        elif method == "AUGUSTUS" or method == "SNAP":
+            best_class_score["hom"] = max(best_class_score["hom"], score)
+        elif method == "AUGUSTUS" or method == "SNAP" or method.startswith("ABINITIO_OTHER"):
             abinitio_flag = 1
-    if rna_flag + homology_flag + abinitio_flag >= 2:
+            best_class_score["abi"] = max(best_class_score["abi"], score)
+    nclass = rna_flag + homology_flag + abinitio_flag
+    if nclass >= 2:
         score_compare(filtered_group)
+    elif nclass == 1 and one_class_min > 0 and max(best_class_score.values()) >= one_class_min:
+        score_compare(filtered_group)   # strong single-class rescue (pseudogene-prone, hence the score bar)
 
 

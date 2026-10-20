@@ -94,9 +94,10 @@ unordered_map<string, double> Score_cds_hash(const vector<string> &file1)
   
   for(int i=0;i<(int)KeyVec.size();i++){
     I = Split(KeyVec[i],'_');
-    key = I[0] + "_" + I[2] + "_" + I[3] + "_" + I[4] + "_" + I[5];
+    int nf1 = I.size();   // tool names may contain '_': parse fields from both ends
+    key = I[0] + "_" + I[nf1-4] + "_" + I[nf1-3] + "_" + I[nf1-2] + "_" + I[nf1-1];
     K.push_back(key);
-    cdsinfo = {cdshash2[KeyVec[i]], StoI(I[2]), StoI(I[3])};
+    cdsinfo = {cdshash2[KeyVec[i]], StoI(I[nf1-4]), StoI(I[nf1-3])};
     cdshash.insert(pair<int, tgroup>(StoI(I[0]), cdsinfo));
   }
   
@@ -195,9 +196,10 @@ unordered_map<string, double> Score_intron_hash(const vector<string> &file1){
 
   for(int i=0;i<(int)KeyVec.size();i++){
     I = Split(KeyVec[i],'_');
-    key = I[0] + '_' + I[2] + '_' + I[3] + '_' + I[4];
+    int nf2 = I.size();   // tool names may contain '_': parse fields from both ends
+    key = I[0] + '_' + I[nf2-3] + '_' + I[nf2-2] + '_' + I[nf2-1];
     K.push_back(key);
-    introninfo = {intronhash2[KeyVec[i]], StoI(I[2]), StoI(I[3])};
+    introninfo = {intronhash2[KeyVec[i]], StoI(I[nf2-3]), StoI(I[nf2-2])};
     intronhash.insert(pair<int, tgroup>(StoI(I[0]), introninfo));
   }  
   
